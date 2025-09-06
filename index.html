@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A1 & A2 Study Portal</title>
+    <title>JIIT A1 & A2 Study Portal</title>
     <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font from Google Fonts -->
@@ -13,18 +13,51 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a202c;
+            background-color: #0b0f19; /* A darker, more futuristic background */
             color: #e2e8f0;
+        }
+        .futuristic-card {
+            transition: all 0.5s ease-out; /* Slower transition for animation */
+            box-shadow: 0 0 15px rgba(25, 179, 219, 0.4);
+            opacity: 0; /* Initially hidden for animation */
+            transform: translateY(20px); /* Starts slightly below for the slide-up effect */
+        }
+        .futuristic-card:hover {
+            box-shadow: 0 0 25px rgba(25, 179, 219, 0.7);
+            transform: translateY(-2px);
+        }
+        .futuristic-card.animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .header-glow {
+            box-shadow: 0 0 30px rgba(74, 144, 226, 0.6);
+        }
+        .subject-title {
+            text-shadow: 0 0 8px currentColor;
+        }
+        .semester-btn {
+            background-color: #1f2937;
+            color: #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            border: 1px solid #4b5563;
+            transition: all 0.2s ease;
+        }
+        .semester-btn:hover {
+            background-color: #374151;
+            color: #ffffff;
+            border-color: #a3e635;
         }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
     <!-- Header -->
-    <header class="bg-gray-900 shadow-xl rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300">
+    <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300">
         <nav class="flex justify-center items-center max-w-7xl mx-auto">
             <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                A1 & A2 Study Portal
+                JIIT A1 & A2 Study Portal
             </h1>
         </nav>
     </header>
@@ -35,200 +68,124 @@
         <!-- Welcome Section -->
         <section class="text-center mb-16">
             <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-                Your one-stop destination for all academic materials for **Basic Electronics**, **SDF**, **Physics**, and **Maths**. Find everything you need for lectures, labs, and tutorials.
+                Your one-stop destination for all academic materials for Basic Electronics, SDF, Physics, and Maths. Find everything you need for lectures, labs, and tutorials.
             </p>
         </section>
 
-        <!-- Subjects Section -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            
-            <!-- Basic Electronics -->
-            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-purple-400">Basic Electronics</h2>
-                <div class="space-y-4">
-                    <!-- Lecture Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lecture Materials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lecture Notes (PDF)</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Video Lectures</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
-                        </ul>
-                    </details>
-                    
-                    <!-- Lab Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lab Work
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lab Manuals</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Simulation Files</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
-                        </ul>
-                    </details>
-
-                    <!-- Tutorial Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Tutorials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Problem Sheets</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Solution Guides</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Practice Quizzes</a></li>
-                        </ul>
-                    </details>
-                </div>
+        <!-- Semester Selection -->
+        <section class="text-center mb-12">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300">Select a Semester</h2>
+            <div id="semester-selector" class="flex flex-wrap justify-center gap-4">
+                <!-- Semester buttons will be generated by JavaScript -->
             </div>
+        </section>
 
-            <!-- SDF -->
-            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-orange-400">SDF</h2>
-                <div class="space-y-4">
-                    <!-- Lecture Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lecture Materials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lecture Notes (PDF)</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Video Lectures</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
-                        </ul>
-                    </details>
-                    
-                    <!-- Lab Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lab Work
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lab Manuals</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Simulation Files</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
-                        </ul>
-                    </details>
-
-                    <!-- Tutorial Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Tutorials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Problem Sheets</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Solution Guides</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Practice Quizzes</a></li>
-                        </ul>
-                    </details>
-                </div>
-            </div>
-
-            <!-- Physics -->
-            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-lime-400">Physics</h2>
-                <div class="space-y-4">
-                    <!-- Lecture Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lecture Materials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lecture Notes (PDF)</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Video Lectures</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
-                        </ul>
-                    </details>
-                    
-                    <!-- Lab Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lab Work
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lab Manuals</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Simulation Files</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
-                        </ul>
-                    </details>
-
-                    <!-- Tutorial Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Tutorials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Problem Sheets</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Solution Guides</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Practice Quizzes</a></li>
-                        </ul>
-                    </details>
-                </div>
-            </div>
-
-            <!-- Maths -->
-            <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4 text-pink-400">Maths</h2>
-                <div class="space-y-4">
-                    <!-- Lecture Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lecture Materials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lecture Notes (PDF)</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Video Lectures</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
-                        </ul>
-                    </details>
-                    
-                    <!-- Lab Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Lab Work
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Lab Manuals</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Simulation Files</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
-                        </ul>
-                    </details>
-
-                    <!-- Tutorial Section -->
-                    <details class="bg-gray-700 rounded-lg p-4 cursor-pointer hover:bg-gray-600 transition-colors duration-200">
-                        <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                            Tutorials
-                            <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </summary>
-                        <ul class="mt-2 text-gray-300 list-disc list-inside">
-                            <li><a href="#" class="hover:text-cyan-400">Problem Sheets</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Solution Guides</a></li>
-                            <li><a href="#" class="hover:text-cyan-400">Practice Quizzes</a></li>
-                        </ul>
-                    </details>
-                </div>
-            </div>
+        <!-- Subjects Section (Dynamic) -->
+        <section id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Subject cards will be dynamically inserted here by JavaScript -->
         </section>
 
     </main>
 
     <!-- Footer -->
     <footer class="bg-gray-900 shadow-2xl rounded-t-3xl mx-4 my-4 p-4 md:mx-10 md:my-10 md:p-6 lg:mx-20 lg:my-12 lg:p-8 text-center text-gray-500 text-sm transition-all duration-300">
-        <p>Created with ❤️ by Aditya Pandey</p>
+        <p>Made with ❤️ by aditya pandey</p>
     </footer>
+
+    <script>
+        // Array of subjects with their details, including which semesters they belong to.
+        // For this example, all subjects are shown for all semesters. You can
+        // customize this data structure to show different subjects for different semesters.
+        const subjects = [
+            { name: 'Basic Electronics', color: 'text-purple-400' },
+            { name: 'SDF', color: 'text-orange-400' },
+            { name: 'Physics', color: 'text-lime-400' },
+            { name: 'Maths', color: 'text-pink-400' }
+        ];
+
+        // Get the container where subjects will be rendered
+        const subjectsContainer = document.getElementById('subjects-container');
+        const semesterSelector = document.getElementById('semester-selector');
+
+        // Function to create a subject card HTML string
+        const createSubjectCard = (subject) => {
+            return `
+                <div class="bg-gray-900 p-6 rounded-2xl border border-gray-700 futuristic-card">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 ${subject.color} subject-title">${subject.name}</h2>
+                    <div class="space-y-4">
+                        <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                            <summary class="flex justify-between items-center text-lg font-semibold text-white">
+                                Lecture Materials
+                                <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </summary>
+                            <ul class="mt-2 text-gray-300 list-disc list-inside">
+                                <li><a href="#" class="hover:text-cyan-400">Lecture Notes (PDF)</a></li>
+                                <li><a href="#" class="hover:text-cyan-400">Video Lectures</a></li>
+                                <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
+                            </ul>
+                        </details>
+                        
+                        <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                            <summary class="flex justify-between items-center text-lg font-semibold text-white">
+                                Lab Work
+                                <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </summary>
+                            <ul class="mt-2 text-gray-300 list-disc list-inside">
+                                <li><a href="#" class="hover:text-cyan-400">Lab Manuals</a></li>
+                                <li><a href="#" class="hover:text-cyan-400">Simulation Files</a></li>
+                                <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
+                            </ul>
+                        </details>
+
+                        <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
+                            <summary class="flex justify-between items-center text-lg font-semibold text-white">
+                                Tutorials
+                                <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </summary>
+                            <ul class="mt-2 text-gray-300 list-disc list-inside">
+                                <li><a href="#" class="hover:text-cyan-400">Problem Sheets</a></li>
+                                <li><a href="#" class="hover:text-cyan-400">Solution Guides</a></li>
+                                <li><a href="#" class="hover:text-cyan-400">Practice Quizzes</a></li>
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Function to render subjects with a staggered animation
+        const renderSubjects = (semester) => {
+            subjectsContainer.innerHTML = ''; // Clear existing content
+
+            // Create and append subject cards with a slight delay
+            subjects.forEach((subject, index) => {
+                const card = document.createElement('div');
+                card.innerHTML = createSubjectCard(subject).trim();
+                subjectsContainer.appendChild(card.firstChild);
+
+                // Use a timeout to add the animation class with a delay
+                setTimeout(() => {
+                    card.firstChild.classList.add('animate-in');
+                }, index * 100); // 100ms delay per subject
+            });
+        };
+        
+        // Generate semester buttons
+        for (let i = 1; i <= 8; i++) {
+            const button = document.createElement('button');
+            button.className = 'semester-btn';
+            button.textContent = `Sem ${i}`;
+            button.addEventListener('click', () => {
+                // Remove active state from all buttons
+                document.querySelectorAll('.semester-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-gray-900', 'ring-cyan-400'));
+                // Add active state to the clicked button
+                button.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-900', 'ring-cyan-400');
+                renderSubjects(i);
+            });
+            semesterSelector.appendChild(button);
+        }
+
+    </script>
 
 </body>
 </html>
