@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>JIIT A2 Study Portal</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -256,13 +256,31 @@
             }
         }
         
-        /* New styling for the bell button and pop-up */
+        /* --- UPDATED: bell popup styles --- */
+
+        /* Bell button / popup behavior updated: popup placed under bell (top-right) */
+        /* Bell icon will shake forever via the rule below */
+        @keyframes shake {
+          0% { transform: rotate(0deg); }
+          20% { transform: rotate(-15deg); }
+          40% { transform: rotate(15deg); }
+          60% { transform: rotate(-10deg); }
+          80% { transform: rotate(10deg); }
+          100% { transform: rotate(0deg); }
+        }
+        #bell-button i {
+          animation: shake 1.2s infinite ease-in-out;
+          transform-origin: top center;
+        }
+
+        /* popup aligned under bell (instead of centered) */
         .pop-up {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
+            position: absolute;
+            top: 70px;    /* below the bell */
+            right: 20px;
+            transform: none;
+            z-index: 110;
+            display: none;
         }
         #announcement-pop-up {
             display: none; /* Hide by default */
@@ -275,6 +293,15 @@
             background-color: #1a202c;
             box-shadow: 0 0 40px rgba(6, 182, 212, 0.5);
             border-radius: 1rem;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
         }
     </style>
 </head>
@@ -1024,14 +1051,23 @@
         });
         
         // New: Event listener for the bell and close buttons
+        // REPLACED: instead of simple toggle, use slide animations and keep bell CSS-shaking permanently
         bellButton.addEventListener('click', () => {
-            popUp.style.display = popUp.style.display === 'flex' ? 'none' : 'flex';
+            if (popUp.style.display === 'flex') {
+                popUp.style.animation = 'slideUp 0.3s ease-in-out';
+                setTimeout(() => { popUp.style.display = 'none'; }, 250);
+            } else {
+                popUp.style.display = 'flex';
+                popUp.style.animation = 'slideDown 0.3s ease-out';
+            }
         });
 
         closeButton.addEventListener('click', () => {
-            popUp.style.display = 'none';
+            popUp.style.animation = 'slideUp 0.3s ease-in-out';
+            setTimeout(() => { popUp.style.display = 'none'; }, 250);
         });
 
+        // Keep original modal-overlay click handlers
         window.addEventListener('click', (event) => {
             if (event.target === timetableModal) {
                 timetableModal.classList.remove('active');
@@ -1046,6 +1082,17 @@
             if (event.target === portalModal) {
                 portalModal.classList.remove('active');
                 portalIframe.src = "";
+            }
+        });
+
+        // Click outside the popup closes it (dropdown-like)
+        document.addEventListener('click', (event) => {
+            const clickedInsidePopup = popUp.contains(event.target);
+            const clickedBell = bellButton.contains(event.target);
+            // If popup is open and click was neither on bell nor inside popup, close it
+            if (popUp.style.display === 'flex' && !clickedInsidePopup && !clickedBell) {
+                popUp.style.animation = 'slideUp 0.3s ease-in-out';
+                setTimeout(() => { popUp.style.display = 'none'; }, 250);
             }
         });
 
