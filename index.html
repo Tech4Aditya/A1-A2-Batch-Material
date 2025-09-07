@@ -188,6 +188,15 @@
         .current-class-glow {
             animation: pulse-glow 1.5s infinite;
         }
+        
+        /* Hide scrollbar for a cleaner look */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -206,14 +215,18 @@
 
     <div id="portal-content" class="flex flex-col min-h-screen">
         <!-- Header with Clock and Timetable button -->
-        <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex justify-between items-center flex-wrap gap-4">
-            <button id="show-timetable-btn" class="semester-btn text-base p-2">
-                View Timetable
-            </button>
-            <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
+        <!-- Use flex-col for mobile, and md:flex-row for PC -->
+        <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex flex-col md:flex-row justify-between items-center flex-wrap gap-4">
+            <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center md:text-left flex-grow">
                 JIIT A2 STUDY PORTAL
             </h1>
-            <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 flex-grow-0 glow-container"></div>
+            <!-- Use flex-col for mobile, and md:flex-row for PC -->
+            <div class="flex flex-col md:flex-row items-center gap-4">
+                <button id="show-timetable-btn" class="semester-btn text-base p-2">
+                    View Timetable
+                </button>
+                <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 glow-container"></div>
+            </div>
         </header>
         
         <!-- Welcome and User Info Section -->
@@ -599,7 +612,7 @@
                 const isCurrentClass = isCurrentDay && (currentTime >= startTimeInMinutes && currentTime < endTimeInMinutes);
                 
                 return `
-                    <div class="bg-gray-900 rounded-lg p-3 text-sm flex items-center justify-between border-l-4 border-${cls.color}-400 ${isCurrentClass ? 'current-class-glow' : ''}">
+                    <div class="bg-gray-900 rounded-lg p-3 text-sm md:text-base flex items-center justify-between border-l-4 border-${cls.color}-400 ${isCurrentClass ? 'current-class-glow' : ''}">
                         <div>
                             <p class="font-medium text-white">${cls.subject} <span class="text-gray-400 font-normal">(${cls.type})</span></p>
                             <p class="text-xs text-gray-500">${cls.time}</p>
@@ -611,11 +624,11 @@
 
             const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
             const dayButtons = daysOfWeek.map(day => `
-                <button class="day-btn text-xs md:text-sm ${day === selectedDay ? 'active' : ''}" data-day="${day}">${day.substring(0, 3)}</button>
+                <button class="day-btn text-xs md:text-sm px-2 py-1 flex-shrink-0 ${day === selectedDay ? 'active' : ''}" data-day="${day}">${day.substring(0, 3)}</button>
             `).join('');
 
             timetableContent.innerHTML = `
-                <div class="flex justify-center space-x-2 md:space-x-4 mb-6" id="day-buttons-container">
+                <div class="flex overflow-x-auto whitespace-nowrap space-x-2 pb-2 mb-4 scrollbar-hide" id="day-buttons-container">
                     ${dayButtons}
                 </div>
                 <div class="p-4 rounded-xl shadow-xl border border-gray-700 bg-gray-800">
