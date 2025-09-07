@@ -6,6 +6,8 @@
     <title>JIIT A2 Study Portal</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -120,7 +122,7 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .login-modal-content, .password-modal-content {
+        .login-modal-content, .password-modal-content, .announcement-modal-content {
             width: 90%;
             max-width: 500px;
             height: auto;
@@ -253,9 +255,59 @@
                 flex-direction: row;
             }
         }
+        
+        /* New styling for the bell button and pop-up */
+        .pop-up {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+        }
+        #announcement-pop-up {
+            display: none; /* Hide by default */
+        }
+        .pop-up-content {
+            width: 90%;
+            max-width: 500px;
+            height: auto;
+            padding: 2rem;
+            background-color: #1a202c;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.5);
+            border-radius: 1rem;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
+
+    <!-- The bell icon button -->
+    <button id="bell-button" class="fixed top-6 right-6 p-4 bg-gray-900 text-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-cyan-300 z-50">
+        <i class="fas fa-bell text-2xl"></i>
+    </button>
+    
+    <!-- The new announcement pop-up window -->
+    <div id="announcement-pop-up" class="pop-up">
+        <div class="pop-up-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-cyan-300">Important Announcements</h2>
+                <button id="close-button" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="p-4 bg-yellow-900 rounded-lg border border-yellow-700">
+                    <p class="text-sm text-yellow-300 font-semibold">SITE STATUS</p>
+                    <p class="text-gray-300">This site is under development, may not contain a lot of features, and some features may be non-functional.</p>
+                </div>
+                <div class="p-4 bg-green-900 rounded-lg border border-green-700">
+                    <p class="text-sm text-green-300 font-semibold">EVENT NOTIFICATION</p>
+                    <p class="text-gray-300">Election results are out! Congratulations to Vaibhav Pandey, who is the new CR of the class.</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
 
     <!-- Login Modal -->
     <div id="login-modal" class="modal active">
@@ -527,6 +579,12 @@
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
         const loginMessageBox = document.getElementById('login-message-box');
+        
+        // New announcement elements
+        const bellButton = document.getElementById('bell-button');
+        const popUp = document.getElementById('announcement-pop-up');
+        const closeButton = document.getElementById('close-button');
+
 
         // State variables
         let currentEventIndex = 0;
@@ -964,6 +1022,15 @@
             portalModal.classList.remove('active');
             portalIframe.src = ""; // Stop loading the iframe content
         });
+        
+        // New: Event listener for the bell and close buttons
+        bellButton.addEventListener('click', () => {
+            popUp.style.display = popUp.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        closeButton.addEventListener('click', () => {
+            popUp.style.display = 'none';
+        });
 
         window.addEventListener('click', (event) => {
             if (event.target === timetableModal) {
@@ -988,6 +1055,10 @@
             if (isLoggedIn === 'true') {
                 loginModal.classList.remove('active');
                 showPortalContent();
+                // Automatically show the announcement pop-up
+                setTimeout(() => {
+                    popUp.style.display = 'flex';
+                }, 2000); // 2-second delay
             } else {
                 loginModal.classList.add('active');
             }
