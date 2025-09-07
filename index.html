@@ -4,37 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JIIT A1 & A2 Study Portal</title>
-    <!-- Tailwind CSS CDN for styling -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font from Google Fonts -->
+    <!-- Inter Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
+            background-color: #0d1117;
             color: #e2e8f0;
+            overflow-x: hidden; /* Prevents horizontal scroll on animations */
         }
         .futuristic-card {
-            transition: all 0.5s ease-out;
-            box-shadow: 0 0 15px rgba(25, 179, 219, 0.4);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(25, 179, 219, 0.1);
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px);
         }
         .futuristic-card:hover {
-            box-shadow: 0 0 25px rgba(25, 179, 219, 0.7);
-            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(25, 179, 219, 0.4);
+            transform: translateY(-5px);
         }
         .futuristic-card.animate-in {
             opacity: 1;
             transform: translateY(0);
         }
         .header-glow {
-            box-shadow: 0 0 30px rgba(74, 144, 226, 0.6);
+            box-shadow: 0 0 40px rgba(74, 144, 226, 0.3);
         }
         .subject-title {
-            text-shadow: 0 0 8px currentColor;
+            text-shadow: 0 0 10px currentColor;
         }
         .semester-btn {
             background-color: #1f2937;
@@ -42,17 +43,18 @@
             padding: 0.75rem 1.5rem;
             border-radius: 9999px;
             border: 1px solid #4b5563;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease-in-out;
         }
         .semester-btn:hover {
-            background-color: #374151;
+            background-color: #2d3748;
             color: #ffffff;
-            border-color: #a3e635;
+            border-color: #06b6d4;
         }
         .semester-dropdown {
-            background-color: #1a202c;
+            background-color: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
             border: 1px solid #2d3748;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease-out;
@@ -60,23 +62,41 @@
         .semester-dropdown.active {
             max-height: 500px;
         }
-        /* Fade out and move main content to simulate "fading away to a new universe" */
         .fade-out {
             transition: all 0.6s ease-out;
             opacity: 0;
             transform: scale(0.9) translateY(-20px);
         }
+        .event-card {
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Aesthetic Clock Styling */
+        .clock-container {
+            background-color: #1a202c;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.5);
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.8); }
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Header -->
-    <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300">
-        <nav class="flex justify-center items-center max-w-7xl mx-auto">
-            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                JIIT A1 & A2 Study Portal
-            </h1>
-        </nav>
+    <!-- Header with Clock -->
+    <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex justify-between items-center flex-wrap gap-4">
+        <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
+            JIIT A1 & A2 Study Portal
+        </h1>
+        <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 flex-grow-0 clock-container"></div>
     </header>
 
     <!-- Main Content -->
@@ -87,6 +107,14 @@
             <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
                 Your one-stop destination for all academic materials for Basic Electronics, SDF, Physics, and Maths. Find everything you need for lectures, labs, and tutorials.
             </p>
+        </section>
+
+        <!-- Upcoming Events Section -->
+        <section class="mb-12">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Upcoming Events & Schedule</h2>
+            <div id="events-container" class="space-y-4">
+                <!-- Events will be dynamically inserted here -->
+            </div>
         </section>
 
         <!-- Semester Selection Dropdown -->
@@ -115,7 +143,7 @@
     </footer>
 
     <script>
-        // Array of subjects with their details
+        // Data for subjects and upcoming events
         const subjects = [
             { name: 'Basic Electronics', color: 'text-purple-400' },
             { name: 'SDF', color: 'text-orange-400' },
@@ -123,11 +151,46 @@
             { name: 'Maths', color: 'text-pink-400' }
         ];
 
+        const events = [
+            { title: 'Physics Mid-Term Exam', date: 'Oct 26, 2024', time: '10:00 AM' },
+            { title: 'SDF Lab Submission', date: 'Nov 5, 2024', time: '11:59 PM' },
+            { title: 'Maths Problem Session', date: 'Nov 12, 2024', time: '02:00 PM' }
+        ];
+
+        // Element references
         const mainContent = document.getElementById('main-content');
         const subjectsContainer = document.getElementById('subjects-container');
         const semesterSelector = document.getElementById('semester-selector');
         const semesterDropdown = document.getElementById('semester-dropdown');
         const semesterToggle = document.getElementById('semester-toggle');
+        const eventsContainer = document.getElementById('events-container');
+        const clockElement = document.getElementById('clock');
+
+        // Function to update the digital clock
+        const updateClock = () => {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            clockElement.textContent = time;
+        };
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+
+        // Function to render upcoming events
+        const renderEvents = () => {
+            eventsContainer.innerHTML = '';
+            events.forEach(event => {
+                const eventCard = document.createElement('div');
+                eventCard.className = 'bg-gray-800 p-4 rounded-lg flex items-center event-card border border-gray-700 hover:bg-gray-700 transition-colors duration-200';
+                eventCard.innerHTML = `
+                    <div class="flex-grow">
+                        <h3 class="font-semibold text-gray-200">${event.title}</h3>
+                        <p class="text-sm text-gray-400">${event.date} at ${event.time}</p>
+                    </div>
+                `;
+                eventsContainer.appendChild(eventCard);
+            });
+        };
+        renderEvents(); // Initial rendering of events
 
         // Function to create a subject card HTML string
         const createSubjectCard = (subject) => {
@@ -146,7 +209,6 @@
                                 <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
                             </ul>
                         </details>
-                        
                         <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
                             <summary class="flex justify-between items-center text-lg font-semibold text-white">
                                 Lab Work
@@ -158,7 +220,6 @@
                                 <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
                             </ul>
                         </details>
-
                         <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
                             <summary class="flex justify-between items-center text-lg font-semibold text-white">
                                 Tutorials
@@ -177,14 +238,12 @@
 
         // Function to render subjects with a staggered animation
         const renderSubjects = (semester) => {
-            subjectsContainer.innerHTML = ''; // Clear existing content
+            subjectsContainer.innerHTML = '';
             subjects.forEach((subject, index) => {
                 const tempContainer = document.createElement('div');
                 tempContainer.innerHTML = createSubjectCard(subject).trim();
                 const cardElement = tempContainer.firstChild;
                 subjectsContainer.appendChild(cardElement);
-
-                // Use a timeout to add the animation class with a delay
                 setTimeout(() => {
                     cardElement.classList.add('animate-in');
                 }, index * 100);
@@ -201,13 +260,16 @@
                 semesterToggle.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-gray-900', 'ring-cyan-400');
                 semesterDropdown.classList.remove('active');
 
+                // Update the text of the main semester button
+                semesterToggle.textContent = `Sem ${i}`;
+
                 // Trigger the "fade away" animation on the main content
                 mainContent.classList.add('fade-out');
 
                 // After the fade out animation completes, render the new subjects
                 setTimeout(() => {
-                    mainContent.classList.remove('fade-out'); // Remove fade-out class
-                    renderSubjects(i); // Render the new subjects with the staggered animation
+                    mainContent.classList.remove('fade-out');
+                    renderSubjects(i);
                 }, 600); // Wait for the transition to finish
             });
             semesterSelector.appendChild(button);
@@ -222,6 +284,5 @@
             semesterToggle.classList.toggle('ring-cyan-400');
         });
     </script>
-
 </body>
 </html>
