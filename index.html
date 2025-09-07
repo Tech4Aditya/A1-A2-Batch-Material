@@ -114,7 +114,7 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .name-modal-content {
+        .login-modal-content {
             width: 90%;
             max-width: 500px;
             height: auto;
@@ -162,51 +162,83 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+        
+        #portal-content {
+            display: none;
+        }
+
+        .message-box {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 101;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        .message-box.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Header with Clock and Timetable button -->
-    <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex justify-between items-center flex-wrap gap-4">
-        <button id="show-timetable-btn" class="semester-btn text-base p-2 glow-container">
-            View Timetable
-        </button>
-        <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
-            JIIT A2 STUDY PORTAL
-        </h1>
-        <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 flex-grow-0 glow-container"></div>
-    </header>
-    
-    <!-- Welcome and User Info Section -->
-    <section id="user-info-section" class="text-center py-8">
-        <h2 id="welcome-message" class="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-lime-500">Welcome, Student!</h2>
-        <button id="set-name-btn" class="mt-2 text-sm text-gray-400 hover:text-cyan-400 transition-colors">
-            Set My Name
-        </button>
-    </section>
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content login-modal-content flex flex-col items-center justify-center">
+            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">Portal Login</h2>
+            <input type="text" id="name-input" placeholder="Enter your name" class="w-full max-w-sm px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400">
+            <input type="password" id="password-input" placeholder="Enter password" class="w-full max-w-sm px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400">
+            <button id="login-btn" class="semester-btn text-base p-2 w-full max-w-xs glow-container mt-4">
+                Login
+            </button>
+        </div>
+    </div>
 
-    <!-- Main Content -->
-    <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 transition-all duration-500 ease-out">
+    <div id="portal-content" class="flex flex-col min-h-screen">
+        <!-- Header with Clock and Timetable button -->
+        <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex justify-between items-center flex-wrap gap-4">
+            <button id="show-timetable-btn" class="semester-btn text-base p-2 glow-container">
+                View Timetable
+            </button>
+            <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
+                JIIT A2 STUDY PORTAL
+            </h1>
+            <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 flex-grow-0 glow-container"></div>
+        </header>
         
-        <!-- Upcoming Events & Timetable Section -->
-        <section class="mb-12">
-            <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Events & Schedule</h2>
-            <div id="events-container" class="space-y-4">
-                <!-- Single event will be dynamically inserted here -->
-            </div>
+        <!-- Welcome and User Info Section -->
+        <section id="user-info-section" class="text-center py-8">
+            <h2 id="welcome-message" class="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-lime-500">Welcome, Student!</h2>
         </section>
 
-        <!-- Subjects Section (Dynamic) -->
-        <section id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Subject cards will be dynamically inserted here by JavaScript -->
-        </section>
+        <!-- Main Content -->
+        <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 transition-all duration-500 ease-out">
+            
+            <!-- Upcoming Events & Timetable Section -->
+            <section class="mb-12">
+                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Events & Schedule</h2>
+                <div id="events-container" class="space-y-4">
+                    <!-- Single event will be dynamically inserted here -->
+                </div>
+            </section>
 
-    </main>
+            <!-- Subjects Section (Dynamic) -->
+            <section id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Subject cards will be dynamically inserted here by JavaScript -->
+            </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 shadow-2xl rounded-t-3xl mx-4 my-4 p-4 md:mx-10 md:my-10 md:p-6 lg:mx-20 lg:my-12 lg:p-8 text-center text-gray-500 text-sm transition-all duration-300">
-        <p>Made with ❤️ by Aditya Pandey</p>
-    </footer>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 shadow-2xl rounded-t-3xl mx-4 my-4 p-4 md:mx-10 md:my-10 md:p-6 lg:mx-20 lg:my-12 lg:p-8 text-center text-gray-500 text-sm transition-all duration-300">
+            <p>Made with ❤️ by Aditya Pandey</p>
+        </footer>
+    </div>
 
     <!-- Timetable Modal -->
     <div id="timetable-modal" class="modal">
@@ -238,17 +270,6 @@
             <div id="material-buttons-container" class="material-buttons-container">
                 <!-- Material buttons will be dynamically inserted here -->
             </div>
-        </div>
-    </div>
-
-    <!-- Name Input Modal -->
-    <div id="name-modal" class="modal">
-        <div class="modal-content name-modal-content flex flex-col items-center justify-center">
-            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">What should I call you?</h2>
-            <input type="text" id="name-input" placeholder="Enter your name" class="w-full max-w-sm px-4 py-2 my-4 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400">
-            <button id="save-name-btn" class="semester-btn text-base p-2 w-full max-w-xs glow-container">
-                Save Name
-            </button>
         </div>
     </div>
 
@@ -331,6 +352,7 @@
         ];
 
         // Element references
+        const portalContent = document.getElementById('portal-content');
         const subjectsContainer = document.getElementById('subjects-container');
         const eventsContainer = document.getElementById('events-container');
         const allEventsContainer = document.getElementById('all-events-container');
@@ -339,7 +361,7 @@
         const timetableModal = document.getElementById('timetable-modal');
         const eventsModal = document.getElementById('events-modal');
         const materialModal = document.getElementById('material-modal');
-        const nameModal = document.getElementById('name-modal');
+        const loginModal = document.getElementById('login-modal');
         const closeTimetableBtn = document.getElementById('close-modal-btn');
         const closeEventsBtn = document.getElementById('close-events-modal-btn');
         const closeMaterialBtn = document.getElementById('close-material-modal-btn');
@@ -347,9 +369,9 @@
         const materialButtonsContainer = document.getElementById('material-buttons-container');
         const materialModalTitle = document.getElementById('material-modal-title');
         const welcomeMessage = document.getElementById('welcome-message');
-        const setNameBtn = document.getElementById('set-name-btn');
         const nameInput = document.getElementById('name-input');
-        const saveNameBtn = document.getElementById('save-name-btn');
+        const passwordInput = document.getElementById('password-input');
+        const loginBtn = document.getElementById('login-btn');
 
         // State variables
         let currentEventIndex = 0;
@@ -403,39 +425,18 @@
                 <div class="bg-gray-900 p-6 rounded-2xl border border-gray-700 futuristic-card">
                     <h2 class="text-2xl md:text-3xl font-bold mb-4 ${subject.color} subject-title">${subject.name}</h2>
                     <div class="space-y-4">
-                        <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
-                            <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                                Lecture Materials
-                                <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </summary>
-                            <ul class="mt-2 text-gray-300 list-disc list-inside">
-                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="notes">Lecture Notes (PDF)</li>
-                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="videos">Video Lectures</li>
-                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="presentations">Class Presentations</li>
-                            </ul>
-                        </details>
-                        <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
-                            <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                                Lab Work
-                                <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </summary>
-                            <ul class="mt-2 text-gray-300 list-disc list-inside">
-                                <li><a href="#" class="hover:text-cyan-400">Lab Manuals</a></li>
-                                <li><a href="#" class="hover:text-cyan-400">Simulation Files</a></li>
-                                <li><a href="#" class="hover:text-cyan-400">Lab Reports</a></li>
-                            </ul>
-                        </details>
-                        <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
-                            <summary class="flex justify-between items-center text-lg font-semibold text-white">
-                                Tutorials
-                                <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </summary>
-                            <ul class="mt-2 text-gray-300 list-disc list-inside">
-                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="problems">Problem Sheets</li>
-                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="solutions">Solution Guides</li>
-                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="quizzes">Practice Quizzes</li>
-                            </ul>
-                        </details>
+                        <div class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 material-link" data-subject="${subject.name}" data-type="notes">
+                            <h3 class="text-lg font-semibold text-white">Lecture Materials</h3>
+                            <p class="text-sm text-gray-400">Notes, videos, and presentations.</p>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 material-link" data-subject="${subject.name}" data-type="labs">
+                            <h3 class="text-lg font-semibold text-white">Lab Work</h3>
+                            <p class="text-sm text-gray-400">Manuals, simulations, and reports.</p>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 material-link" data-subject="${subject.name}" data-type="tutorials">
+                            <h3 class="text-lg font-semibold text-white">Tutorials</h3>
+                            <p class="text-sm text-gray-400">Problem sheets and solution guides.</p>
+                        </div>
                     </div>
                 </div>
             `;
@@ -459,10 +460,8 @@
         const updateWelcomeMessage = (name) => {
             if (name) {
                 welcomeMessage.textContent = `Welcome, ${name}!`;
-                setNameBtn.textContent = 'Change Name';
             } else {
                 welcomeMessage.textContent = `Welcome, Student!`;
-                setNameBtn.textContent = 'Set My Name';
             }
         };
 
@@ -491,6 +490,7 @@
                 const number = materialBtn.dataset.number;
                 const subjectNormalized = currentSubject.replace(/\s/g, '_');
                 let driveLink = '';
+                // Placeholder links for different material types
                 switch (currentMaterialType) {
                     case 'notes':
                         driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Notes_Chapter_${number}`;
@@ -501,18 +501,17 @@
                     case 'presentations':
                         driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Presentations_No_${number}`;
                         break;
-                    case 'problems':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Problem_Sheets_No_${number}`;
+                    case 'labs':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Lab_Materials_No_${number}`;
                         break;
-                    case 'solutions':
-                        driveLink = `https://drive.com/drive/folders/${subjectNormalized}_Solution_Guides_No_${number}`;
-                        break;
-                    case 'quizzes':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Practice_Quizzes_No_${number}`;
+                    case 'tutorials':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Tutorials_No_${number}`;
                         break;
                 }
-                window.open(driveLink, '_blank');
-                materialModal.classList.remove('active');
+                if (driveLink) {
+                    window.open(driveLink, '_blank');
+                    materialModal.classList.remove('active');
+                }
             }
         });
         
@@ -524,6 +523,8 @@
 
             let titleText = '';
             let buttonTextPrefix = '';
+            const numButtons = 5;
+
             switch (materialType) {
                 case 'notes':
                     titleText = `Select Chapter for ${subjectName} Notes`;
@@ -537,23 +538,19 @@
                     titleText = `Select Presentation for ${subjectName}`;
                     buttonTextPrefix = 'Presentation';
                     break;
-                case 'problems':
-                    titleText = `Select Problem Sheet for ${subjectName}`;
-                    buttonTextPrefix = 'Problem Sheet';
+                case 'labs':
+                    titleText = `Select Lab Material for ${subjectName}`;
+                    buttonTextPrefix = 'Lab Session';
                     break;
-                case 'solutions':
-                    titleText = `Select Solution Guide for ${subjectName}`;
-                    buttonTextPrefix = 'Solution Guide';
-                    break;
-                    case 'quizzes':
-                    titleText = `Select Practice Quiz for ${subjectName}`;
-                    buttonTextPrefix = 'Quiz';
+                case 'tutorials':
+                    titleText = `Select Tutorial for ${subjectName}`;
+                    buttonTextPrefix = 'Tutorial Sheet';
                     break;
             }
 
             materialModalTitle.textContent = titleText;
 
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= numButtons; i++) {
                 const materialBtn = document.createElement('button');
                 materialBtn.className = 'chapter-btn';
                 materialBtn.textContent = `${buttonTextPrefix} ${i}`;
@@ -563,23 +560,39 @@
             materialModal.classList.add('active');
         };
 
-        // Name input functionality
-        setNameBtn.addEventListener('click', () => {
-            nameModal.classList.add('active');
-            const storedName = localStorage.getItem('userName');
-            if (storedName) {
-                nameInput.value = storedName;
+        // Login functionality
+        loginBtn.addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (name === '') {
+                showTemporaryMessage('Please enter your name.', 'red');
+                return;
+            }
+
+            if (password === 'A2FAM') {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', name);
+                loginModal.classList.remove('active');
+                portalContent.style.display = 'block';
+                updateWelcomeMessage(name);
+                updateClock();
+                renderSingleEvent();
+                eventInterval = setInterval(renderSingleEvent, 2000);
+                renderSubjects();
+            } else {
+                showTemporaryMessage('Incorrect credentials.', 'red');
             }
         });
 
-        saveNameBtn.addEventListener('click', () => {
-            const name = nameInput.value.trim();
-            if (name) {
-                localStorage.setItem('userName', name);
-                updateWelcomeMessage(name);
-                nameModal.classList.remove('active');
-            } else {
-                alert('Please enter a name.');
+        passwordInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+        nameInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                loginBtn.click();
             }
         });
 
@@ -605,23 +618,42 @@
             if (event.target === materialModal) {
                 materialModal.classList.remove('active');
             }
-            if (event.target === nameModal) {
-                nameModal.classList.remove('active');
+            if (event.target === loginModal) {
+                // Prevent closing login modal by clicking outside
             }
         });
 
+        // Function to show a temporary message box
+        function showTemporaryMessage(message, color) {
+            let messageBox = document.getElementById('message-box');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'message-box';
+                messageBox.className = `message-box ${color === 'red' ? 'bg-red-500' : 'bg-green-500'}`;
+                document.body.appendChild(messageBox);
+            }
+            messageBox.textContent = message;
+            messageBox.classList.add('show');
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 3000);
+        }
+
         // Initial rendering on page load
         document.addEventListener('DOMContentLoaded', () => {
-            updateClock();
-            renderSingleEvent();
-            eventInterval = setInterval(renderSingleEvent, 2000);
-            renderSubjects();
-
-            const storedName = localStorage.getItem('userName');
-            if (storedName) {
-                updateWelcomeMessage(storedName);
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                portalContent.style.display = 'block';
+                const storedName = localStorage.getItem('userName');
+                if (storedName) {
+                    updateWelcomeMessage(storedName);
+                }
+                updateClock();
+                renderSingleEvent();
+                eventInterval = setInterval(renderSingleEvent, 2000);
+                renderSubjects();
             } else {
-                nameModal.classList.add('active');
+                loginModal.classList.add('active');
             }
         });
     </script>
