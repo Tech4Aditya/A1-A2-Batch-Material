@@ -37,7 +37,7 @@
         .subject-title {
             text-shadow: 0 0 10px currentColor;
         }
-        .semester-btn, .chapter-btn, .day-btn {
+        .semester-btn, .chapter-btn, .day-btn, .portal-btn {
             background-color: #1f2937;
             color: #d1d5db;
             padding: 0.75rem 1.5rem;
@@ -45,7 +45,7 @@
             border: 1px solid #4b5563;
             transition: all 0.3s ease-in-out;
         }
-        .semester-btn:hover, .chapter-btn:hover, .day-btn:hover {
+        .semester-btn:hover, .chapter-btn:hover, .day-btn:hover, .portal-btn:hover {
             background-color: #2d3748;
             color: #ffffff;
             border-color: #06b6d4;
@@ -126,6 +126,21 @@
             height: auto;
             padding: 2rem;
         }
+        .full-screen-modal-content {
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+            background-color: #0d1117;
+            box-shadow: none;
+        }
+        .full-screen-modal-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
         .close-btn {
             position: absolute;
             top: 10px;
@@ -135,6 +150,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: color 0.2s;
+            z-index: 10;
         }
         .close-btn:hover {
             color: #ef4444;
@@ -197,6 +213,44 @@
             -ms-overflow-style: none; /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
+        .loader-container {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(13, 17, 23, 0.95);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #6ee7b7;
+            font-size: 1.25rem;
+        }
+        .loader {
+            border: 4px solid rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #6ee7b7;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .portal-links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+        @media (min-width: 768px) {
+            .portal-links-container {
+                flex-direction: row;
+            }
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -242,6 +296,25 @@
                 <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Current Activity</h2>
                 <div id="current-activity-container" class="space-y-4">
                     <!-- Dynamic content inserted here -->
+                </div>
+            </section>
+            
+            <!-- Quick Links/Student Services Section -->
+            <section class="mb-12">
+                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-6">Student Services</h2>
+                <div class="portal-links-container">
+                    <button id="attendance-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2"><path d="M12 2a10 10 0 1 0 10 10a10 10 0 0 0-10-10Z"/><path d="M9 12l2 2l4-4"/></svg>
+                            Attendance Portal
+                        </span>
+                    </button>
+                    <button id="mess-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17.5 22h-.5c-.2 0-.4-.1-.5-.3L12 14v-3c0-.4-.3-.7-.7-.9l4-1.6c.7-.3 1.3-.8 1.6-1.5c.3-.8.4-1.8.2-2.7a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5c-.2.9-.1 1.9.2 2.7c.3.7.9 1.2 1.6 1.5L24 11v3l-4.5 7.7c-.1.2-.3.3-.5.3z"/><path d="M6 14v-3c0-.4-.3-.7-.7-.9l-4-1.6C.6 7.2 0 6.7.2 6c.2-.9.4-1.9.2-2.7a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5c-.2.9-.1 1.9.2 2.7c.3.7.9 1.2 1.6 1.5L12 11v3l-4.5 7.7c-.1.2-.3.3-.5.3z"/><path d="M12 11h-.01"/></svg>
+                            Mess Menu
+                        </span>
+                    </button>
                 </div>
             </section>
             
@@ -296,6 +369,18 @@
             <div id="material-buttons-container" class="material-buttons-container">
                 <!-- Material buttons will be dynamically inserted here -->
             </div>
+        </div>
+    </div>
+
+    <!-- Iframe Portal Modal -->
+    <div id="portal-modal" class="modal">
+        <div class="modal-content full-screen-modal-content">
+            <span class="close-btn" id="close-portal-btn">&times;</span>
+            <div class="loader-container" id="portal-loader">
+                <div class="loader"></div>
+                <div class="mt-4">Loading...</div>
+            </div>
+            <iframe id="portal-iframe" src="" frameborder="0" class="w-full h-full"></iframe>
         </div>
     </div>
 
@@ -402,6 +487,12 @@
         const passwordInput = document.getElementById('password-input');
         const loginBtn = document.getElementById('login-btn');
         const currentActivityContainer = document.getElementById('current-activity-container');
+        const attendanceBtn = document.getElementById('attendance-btn');
+        const messBtn = document.getElementById('mess-btn');
+        const portalModal = document.getElementById('portal-modal');
+        const portalIframe = document.getElementById('portal-iframe');
+        const closePortalBtn = document.getElementById('close-portal-btn');
+        const portalLoader = document.getElementById('portal-loader');
 
         // State variables
         let currentEventIndex = 0;
@@ -662,6 +753,26 @@
             timetableModal.classList.add('active');
             startTimetableUpdates();
         });
+        
+        // New: Event listener for Attendance Portal button
+        attendanceBtn.addEventListener('click', () => {
+            openPortalModal('https://jportal2-0.vercel.app/#/attendance');
+        });
+
+        // New: Event listener for Mess Menu button
+        messBtn.addEventListener('click', () => {
+            openPortalModal('https://mess-schedule.vercel.app/');
+        });
+
+        // New function to handle opening the iframe modal
+        const openPortalModal = (url) => {
+            portalIframe.src = url;
+            portalModal.classList.add('active');
+            portalLoader.style.display = 'flex';
+            portalIframe.onload = () => {
+                portalLoader.style.display = 'none';
+            };
+        };
 
         eventsContainer.addEventListener('click', () => {
             renderAllEvents();
@@ -812,6 +923,11 @@
         closeMaterialBtn.addEventListener('click', () => {
             materialModal.classList.remove('active');
         });
+        
+        closePortalBtn.addEventListener('click', () => {
+            portalModal.classList.remove('active');
+            portalIframe.src = ""; // Stop loading the iframe content
+        });
 
         window.addEventListener('click', (event) => {
             if (event.target === timetableModal) {
@@ -823,6 +939,10 @@
             }
             if (event.target === materialModal) {
                 materialModal.classList.remove('active');
+            }
+            if (event.target === portalModal) {
+                portalModal.classList.remove('active');
+                portalIframe.src = "";
             }
             if (event.target === loginModal) {
                 // Prevent closing login modal by clicking outside
