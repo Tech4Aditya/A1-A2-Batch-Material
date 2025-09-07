@@ -54,7 +54,7 @@
             background-color: rgba(17, 24, 39, 0.8);
             backdrop-filter: blur(10px);
             border: 1px solid #2d3748;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: 8px 30px rgba(0, 0, 0, 0.6);
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.4s ease-out;
@@ -87,12 +87,67 @@
             0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); }
             50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.8); }
         }
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            position: relative;
+            background-color: #1a202c;
+            margin: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.5);
+            animation: modal-fade-in 0.3s ease-out;
+        }
+        @keyframes modal-fade-in {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #d1d5db;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover {
+            color: #ef4444;
+        }
+        .timetable-cell {
+            padding: 0.5rem;
+            border: 1px solid #2d3748;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <!-- Header with Clock -->
+    <!-- Header with Clock and Timetable button -->
     <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex justify-between items-center flex-wrap gap-4">
+        <button id="show-timetable-btn" class="semester-btn text-base p-2">
+            View Timetable
+        </button>
         <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
             JIIT A1 & A2 Study Portal
         </h1>
@@ -101,43 +156,19 @@
 
     <!-- Main Content -->
     <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 transition-all duration-500 ease-out">
-
-        <!-- Welcome Section -->
-        <section class="text-center mb-16">
+        
+        <!-- Welcome Section: Hidden since the portal content loads by default -->
+        <section class="text-center mb-16 hidden" id="welcome-section">
             <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
                 Your one-stop destination for all academic materials for Basic Electronics, SDF, Physics, and Maths. Find everything you need for lectures, labs, and tutorials.
             </p>
         </section>
 
-        <!-- Upcoming Events Section -->
+        <!-- Upcoming Events & Timetable Section -->
         <section class="mb-12">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Upcoming Events & Schedule</h2>
+            <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Events & Schedule</h2>
             <div id="events-container" class="space-y-4">
                 <!-- Events will be dynamically inserted here -->
-            </div>
-        </section>
-
-        <!-- Class Timetable Section -->
-        <section class="mb-12">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Class Timetable</h2>
-            <div class="bg-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg">
-                <p class="text-center text-sm text-gray-500 mb-4">
-                </p>
-                <iframe src="https://planner.jpoop.in/" class="w-full h-96 rounded-xl border-none"></iframe>
-            </div>
-        </section>
-
-
-        <!-- Semester Selection Dropdown -->
-        <section class="text-center mb-12 relative z-10">
-            <button id="semester-toggle" class="semester-btn mx-auto">
-                Select Semester
-                <span id="toggle-icon">▼</span>
-            </button>
-            <div id="semester-dropdown" class="semester-dropdown rounded-xl mt-4 mx-auto max-w-md">
-                <div id="semester-selector" class="flex flex-wrap justify-center p-4 gap-4">
-                    <!-- Semester buttons will be generated by JavaScript -->
-                </div>
             </div>
         </section>
 
@@ -150,8 +181,23 @@
 
     <!-- Footer -->
     <footer class="bg-gray-900 shadow-2xl rounded-t-3xl mx-4 my-4 p-4 md:mx-10 md:my-10 md:p-6 lg:mx-20 lg:my-12 lg:p-8 text-center text-gray-500 text-sm transition-all duration-300">
-        <p>Made with ❤️ by Aditya Pandey</p>
+        <p>Made with ❤️ by aditya pandey</p>
     </footer>
+
+    <!-- Timetable Modal -->
+    <div id="timetable-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal-btn">&times;</span>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Class Timetable</h2>
+            <div id="timetable-selector-container" class="flex justify-center gap-4 mb-4">
+                <button id="show-a1-btn" class="semester-btn">A1 Section</button>
+                <button id="show-a2-btn" class="semester-btn">A2 Section</button>
+            </div>
+            <div id="timetable-content" class="overflow-y-auto w-full h-full">
+                <!-- Timetable will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
 
     <script>
         // Data for subjects and upcoming events
@@ -162,6 +208,130 @@
             { name: 'Maths', color: 'text-pink-400' }
         ];
 
+        const timetableA1 = `
+            <div class="md:col-span-4 col-span-1 md:my-8 my-4">
+                <h2 class="text-xl md:text-3xl font-bold mb-4 text-cyan-300 text-center subject-title">Timetable A1 Section</h2>
+                <div class="overflow-x-auto bg-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg">
+                    <table class="w-full text-sm md:text-base">
+                        <thead>
+                            <tr class="bg-gray-800">
+                                <th class="timetable-cell">Time</th>
+                                <th class="timetable-cell">Monday</th>
+                                <th class="timetable-cell">Tuesday</th>
+                                <th class="timetable-cell">Wednesday</th>
+                                <th class="timetable-cell">Thursday</th>
+                                <th class="timetable-cell">Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">09:00 - 10:00</td>
+                                <td class="timetable-cell">Physics</td>
+                                <td class="timetable-cell">Maths</td>
+                                <td class="timetable-cell">SDF</td>
+                                <td class="timetable-cell">BEE</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">10:00 - 11:00</td>
+                                <td class="timetable-cell">Maths</td>
+                                <td class="timetable-cell">Physics</td>
+                                <td class="timetable-cell">BEE</td>
+                                <td class="timetable-cell">SDF</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">11:00 - 12:00</td>
+                                <td class="timetable-cell">SDF Lab</td>
+                                <td class="timetable-cell">BEE Lab</td>
+                                <td class="timetable-cell">Physics Lab</td>
+                                <td class="timetable-cell">Maths Lab</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">12:00 - 13:00</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                            </tr>
+                             <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">13:00 - 14:00</td>
+                                <td class="timetable-cell">Maths</td>
+                                <td class="timetable-cell">SDF</td>
+                                <td class="timetable-cell">Physics</td>
+                                <td class="timetable-cell">BEE</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        
+        const timetableA2 = `
+            <div class="md:col-span-4 col-span-1 md:my-8 my-4">
+                <h2 class="text-xl md:text-3xl font-bold mb-4 text-cyan-300 text-center subject-title">Timetable A2 Section</h2>
+                <div class="overflow-x-auto bg-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg">
+                    <table class="w-full text-sm md:text-base">
+                        <thead>
+                            <tr class="bg-gray-800">
+                                <th class="timetable-cell">Time</th>
+                                <th class="timetable-cell">Monday</th>
+                                <th class="timetable-cell">Tuesday</th>
+                                <th class="timetable-cell">Wednesday</th>
+                                <th class="timetable-cell">Thursday</th>
+                                <th class="timetable-cell">Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">09:00 - 10:00</td>
+                                <td class="timetable-cell">SDF</td>
+                                <td class="timetable-cell">BEE</td>
+                                <td class="timetable-cell">Maths</td>
+                                <td class="timetable-cell">Physics</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">10:00 - 11:00</td>
+                                <td class="timetable-cell">BEE</td>
+                                <td class="timetable-cell">SDF</td>
+                                <td class="timetable-cell">Physics</td>
+                                <td class="timetable-cell">Maths</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">11:00 - 12:00</td>
+                                <td class="timetable-cell">BEE Lab</td>
+                                <td class="timetable-cell">SDF Lab</td>
+                                <td class="timetable-cell">Maths Lab</td>
+                                <td class="timetable-cell">Physics Lab</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                            <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">12:00 - 13:00</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                                <td class="timetable-cell">Lunch</td>
+                            </tr>
+                             <tr class="hover:bg-gray-700">
+                                <td class="timetable-cell">13:00 - 14:00</td>
+                                <td class="timetable-cell">SDF</td>
+                                <td class="timetable-cell">Maths</td>
+                                <td class="timetable-cell">Physics</td>
+                                <td class="timetable-cell">BEE</td>
+                                <td class="timetable-cell">Break</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
         const events = [
             { title: 'Physics Mid-Term Exam', date: 'Oct 26, 2024', time: '10:00 AM' },
             { title: 'SDF Lab Submission', date: 'Nov 5, 2024', time: '11:59 PM' },
@@ -171,11 +341,14 @@
         // Element references
         const mainContent = document.getElementById('main-content');
         const subjectsContainer = document.getElementById('subjects-container');
-        const semesterSelector = document.getElementById('semester-selector');
-        const semesterDropdown = document.getElementById('semester-dropdown');
-        const semesterToggle = document.getElementById('semester-toggle');
         const eventsContainer = document.getElementById('events-container');
         const clockElement = document.getElementById('clock');
+        const showTimetableBtn = document.getElementById('show-timetable-btn');
+        const timetableModal = document.getElementById('timetable-modal');
+        const closeTimetableBtn = document.getElementById('close-modal-btn');
+        const timetableContent = document.getElementById('timetable-content');
+        const showA1Btn = document.getElementById('show-a1-btn');
+        const showA2Btn = document.getElementById('show-a2-btn');
 
         // Function to update the digital clock
         const updateClock = () => {
@@ -184,7 +357,6 @@
             clockElement.textContent = time;
         };
         setInterval(updateClock, 1000);
-        updateClock(); // Initial call
 
         // Function to render upcoming events
         const renderEvents = () => {
@@ -201,7 +373,6 @@
                 eventsContainer.appendChild(eventCard);
             });
         };
-        renderEvents(); // Initial rendering of events
 
         // Function to create a subject card HTML string
         const createSubjectCard = (subject) => {
@@ -247,8 +418,8 @@
             `;
         };
 
-        // Function to render subjects with a staggered animation
-        const renderSubjects = (semester) => {
+        // Function to render subject cards on initial load
+        const renderContent = () => {
             subjectsContainer.innerHTML = '';
             subjects.forEach((subject, index) => {
                 const tempContainer = document.createElement('div');
@@ -261,38 +432,36 @@
             });
         };
         
-        // Generate semester buttons
-        for (let i = 1; i <= 8; i++) {
-            const button = document.createElement('button');
-            button.className = 'semester-btn';
-            button.textContent = `Sem ${i}`;
-            button.addEventListener('click', () => {
-                // Remove the active state from the dropdown toggle and hide the dropdown
-                semesterToggle.classList.remove('ring-2', 'ring-offset-2', 'ring-offset-gray-900', 'ring-cyan-400');
-                semesterDropdown.classList.remove('active');
+        // Event Listeners
+        showTimetableBtn.addEventListener('click', () => {
+            // Clear previous timetable content and show the modal
+            timetableContent.innerHTML = '';
+            timetableModal.classList.add('active');
+        });
 
-                // Update the text of the main semester button
-                semesterToggle.textContent = `Sem ${i}`;
+        closeTimetableBtn.addEventListener('click', () => {
+            timetableModal.classList.remove('active');
+        });
 
-                // Trigger the "fade away" animation on the main content
-                mainContent.classList.add('fade-out');
+        window.addEventListener('click', (event) => {
+            if (event.target == timetableModal) {
+                timetableModal.classList.remove('active');
+            }
+        });
 
-                // After the fade out animation completes, render the new subjects
-                setTimeout(() => {
-                    mainContent.classList.remove('fade-out');
-                    renderSubjects(i);
-                }, 600); // Wait for the transition to finish
-            });
-            semesterSelector.appendChild(button);
-        }
+        showA1Btn.addEventListener('click', () => {
+            timetableContent.innerHTML = timetableA1;
+        });
 
-        // Toggle dropdown visibility
-        semesterToggle.addEventListener('click', () => {
-            semesterDropdown.classList.toggle('active');
-            semesterToggle.classList.toggle('ring-2');
-            semesterToggle.classList.toggle('ring-offset-2');
-            semesterToggle.classList.toggle('ring-offset-gray-900');
-            semesterToggle.classList.toggle('ring-cyan-400');
+        showA2Btn.addEventListener('click', () => {
+            timetableContent.innerHTML = timetableA2;
+        });
+
+        // Initial rendering on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateClock();
+            renderEvents();
+            renderContent();
         });
     </script>
 </body>
