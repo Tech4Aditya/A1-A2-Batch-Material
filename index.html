@@ -120,11 +120,13 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .login-modal-content {
+        .login-modal-content, .password-modal-content {
             width: 90%;
             max-width: 500px;
             height: auto;
             padding: 2rem;
+            background-color: #1a202c;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.5);
         }
         .full-screen-modal-content {
             width: 100%;
@@ -256,25 +258,52 @@
 <body class="flex flex-col min-h-screen">
 
     <!-- Login Modal -->
-    <div id="login-modal" class="modal">
+    <div id="login-modal" class="modal active">
         <div class="modal-content login-modal-content flex flex-col items-center justify-center">
             <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">Portal Login</h2>
-            <input type="text" id="name-input" placeholder="Enter your name" class="w-full max-w-sm px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400">
-            <input type="password" id="password-input" placeholder="Enter password" class="w-full max-w-sm px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400">
-            <button id="login-btn" class="semester-btn text-base p-2 w-full max-w-xs glow-container mt-4">
-                Login
-            </button>
+            <p class="text-sm text-gray-400 mb-6 text-center">Enter your name and password to log in.</p>
+            <form id="login-form" class="space-y-4 w-full">
+                <div>
+                    <input type="text" id="username" placeholder="Enter Full Name" class="w-full px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
+                </div>
+                <div>
+                    <input type="password" id="password" placeholder="Enter Password" class="w-full px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
+                </div>
+                <button type="submit" class="portal-btn text-base p-2 w-full glow-container mt-4">
+                    Log In
+                </button>
+            </form>
+            <div id="login-message-box" class="message-box hidden mt-4 text-center"></div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content password-modal-content flex flex-col items-center justify-center">
+            <span class="close-btn" id="close-password-modal">&times;</span>
+            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">Change Password</h2>
+            <p class="text-sm text-gray-400 mb-6 text-center">You are using a default password. It is recommended to change it for better security.</p>
+            <form id="password-change-form" class="space-y-4 w-full">
+                <div>
+                    <input type="password" id="new-password" placeholder="Enter New Password" class="w-full px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
+                </div>
+                <div>
+                    <input type="password" id="confirm-password" placeholder="Confirm Password" class="w-full px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
+                </div>
+                <button type="submit" class="portal-btn text-base p-2 w-full glow-container mt-4">
+                    Change Password
+                </button>
+            </form>
+            <div id="password-message-box" class="message-box hidden mt-4 text-center"></div>
         </div>
     </div>
 
     <div id="portal-content" class="flex flex-col min-h-screen">
         <!-- Header with Clock and Timetable button -->
-        <!-- Use flex-col for mobile, and md:flex-row for PC -->
         <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex flex-col md:flex-row justify-between items-center flex-wrap gap-4">
             <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center md:text-left flex-grow">
-                JIIT A2 STUDY PORTAL
+                JIIT A2 Study Portal
             </h1>
-            <!-- Use flex-col for mobile, and md:flex-row for PC -->
             <div class="flex flex-col md:flex-row items-center gap-4">
                 <button id="show-timetable-btn" class="semester-btn text-base p-2">
                     View Timetable
@@ -385,6 +414,42 @@
     </div>
 
     <script>
+        // User credentials stored in an object. This is the default list.
+        const defaultUsers = {
+            "MANYA HANDA": "Mh@4p9zK",
+            "VAIBHAV PANDEY": "Vp#2sW7L",
+            "HARSHIT KUMAR": "Hk$5jR8M",
+            "ARNAV MISHRA": "Am!6yT9N",
+            "SAMYAK KUMAR JAIN": "Sj*7bU0P",
+            "KHYATI POSWAL": "Kp&8cV1Q",
+            "ANANYA SINGH": "As%9dF2R",
+            "DEEPA CHOUDHARY": "Dc^0eG3S",
+            "AYAAN IQBAL": "Ai(1fH4T",
+            "DEVANG KUMAR": "Dk)2gI5U",
+            "DIPANSH DAS": "Dd+3hJ6V",
+            "AKRITI SRIVASTAVA": "As_4iK7W",
+            "MOHAMMAD AZHAN BIN RIYAZ": "Ma-5jL8X",
+            "SHREYA GUPTA": "Sg=6kM9Y",
+            "MANYA RASTOGI": "Mr?7lN0Z",
+            "URVI MISHRA": "Um@8oP1a",
+            "ISHITA GARG": "Ig#9qS2b",
+            "RIYA JAIN": "Rj$0rT3c",
+            "ARYAN SINGH CHHETRI": "Ac%1uV4d",
+            "RITUL R KUMAR": "Rk^2vW5e",
+            "ANUSUYA MUKHERJEE": "Am&3xX6f",
+            "DISHITA SINGH": "Ds*4yY7g",
+            "BHAVYA CHUGH": "Bc!5zZ8h",
+            "ANYA SINGH": "As(6aA9i",
+            "KRISHIV CHAWLA": "Kc)7bB0j",
+            "SARVENDRA VIKRAM": "Sv+8cC1k",
+            "MANAN BHATIA": "Mb_9dD2l",
+            "AKSHARR SONI": "As-0eE3m",
+            "VEDANT JAIN": "Vj=1fF4n",
+            "ADITYA PANDEY (ADMIN)": "ADIVIGI" // New user added
+        };
+
+        let currentUsername = null;
+        
         // Subject data
         const subjects = [
             { name: 'Basic Electronics', color: 'text-red-400' },
@@ -476,23 +541,34 @@
         const eventsModal = document.getElementById('events-modal');
         const materialModal = document.getElementById('material-modal');
         const loginModal = document.getElementById('login-modal');
+        const passwordModal = document.getElementById('password-modal');
         const closeTimetableBtn = document.getElementById('close-modal-btn');
         const closeEventsBtn = document.getElementById('close-events-modal-btn');
         const closeMaterialBtn = document.getElementById('close-material-modal-btn');
+        const closePasswordModal = document.getElementById('close-password-modal');
         const timetableContent = document.getElementById('timetable-content');
         const materialButtonsContainer = document.getElementById('material-buttons-container');
         const materialModalTitle = document.getElementById('material-modal-title');
         const welcomeMessage = document.getElementById('welcome-message');
-        const nameInput = document.getElementById('name-input');
-        const passwordInput = document.getElementById('password-input');
-        const loginBtn = document.getElementById('login-btn');
-        const currentActivityContainer = document.getElementById('current-activity-container');
         const attendanceBtn = document.getElementById('attendance-btn');
         const messBtn = document.getElementById('mess-btn');
         const portalModal = document.getElementById('portal-modal');
         const portalIframe = document.getElementById('portal-iframe');
         const closePortalBtn = document.getElementById('close-portal-btn');
         const portalLoader = document.getElementById('portal-loader');
+        const currentActivityContainer = document.getElementById('current-activity-container');
+        
+        // Login form elements
+        const loginForm = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginMessageBox = document.getElementById('login-message-box');
+
+        // Password change form elements
+        const passwordChangeForm = document.getElementById('password-change-form');
+        const newPasswordInput = document.getElementById('new-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const passwordMessageBox = document.getElementById('password-message-box');
 
         // State variables
         let currentEventIndex = 0;
@@ -532,7 +608,7 @@
             return { start, end };
         };
 
-        // New function to render the current activity on the main page
+        // Function to render the current activity on the main page
         const renderCurrentActivity = () => {
             const now = new Date();
             const currentDayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
@@ -589,7 +665,7 @@
             } else {
                 currentActivityContainer.innerHTML = `
                     <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 animated-event text-center">
-                        <p class="text-lg text-gray-400">No classes scheduled at this time.</p>
+                        <p class="text-lg text-gray-400">No classes are scheduled at this time.</p>
                     </div>
                 `;
                 showTimetableBtn.classList.remove('glow-container');
@@ -635,7 +711,7 @@
                     <h2 class="text-2xl md:text-3xl font-bold mb-4 ${subject.color} subject-title">${subject.name}</h2>
                     <div class="space-y-4">
                         <div class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 material-link" data-subject="${subject.name}" data-type="notes">
-                            <h3 class="text-lg font-semibold text-white">Lecture Materials</h3>
+                            <h3 class="text-lg font-semibold text-white">Lecture Notes</h3>
                             <p class="text-sm text-gray-400">Notes, videos, and presentations.</p>
                         </div>
                         <div class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200 material-link" data-subject="${subject.name}" data-type="labs">
@@ -684,7 +760,7 @@
             if (!selectedDayData) {
                 timetableContent.innerHTML = `
                     <div class="text-center py-8">
-                        <p class="text-xl text-gray-400">No classes scheduled for today.</p>
+                        <p class="text-xl text-gray-400">No classes are scheduled for today.</p>
                     </div>
                 `;
                 return;
@@ -840,15 +916,15 @@
 
             switch (materialType) {
                 case 'notes':
-                    titleText = `Select Chapter for ${subjectName} Notes`;
+                    titleText = `Select a Chapter for ${subjectName} Notes`;
                     buttonTextPrefix = 'Chapter';
                     break;
                 case 'videos':
-                    titleText = `Select Video for ${subjectName}`;
+                    titleText = `Select a Video for ${subjectName}`;
                     buttonTextPrefix = 'Video';
                     break;
                 case 'presentations':
-                    titleText = `Select Presentation for ${subjectName}`;
+                    titleText = `Select a Presentation for ${subjectName}`;
                     buttonTextPrefix = 'Presentation';
                     break;
                 case 'labs':
@@ -856,7 +932,7 @@
                     buttonTextPrefix = 'Lab Session';
                     break;
                 case 'tutorials':
-                    titleText = `Select Tutorial for ${subjectName}`;
+                    titleText = `Select a Tutorial for ${subjectName}`;
                     buttonTextPrefix = 'Tutorial Sheet';
                     break;
             }
@@ -874,43 +950,103 @@
         };
 
         // Login functionality
-        loginBtn.addEventListener('click', () => {
-            const name = nameInput.value.trim();
-            const password = passwordInput.value;
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const username = usernameInput.value.trim().toUpperCase();
+            const password = passwordInput.value.trim();
+            
+            loginMessageBox.textContent = '';
+            loginMessageBox.classList.remove('error', 'success');
+            loginMessageBox.classList.add('hidden');
 
-            if (name === '') {
-                showTemporaryMessage('Please enter your name.', 'red');
+            // Load passwords from local storage
+            const savedPasswords = JSON.parse(localStorage.getItem('user_passwords') || '{}');
+            const allUsers = { ...defaultUsers, ...savedPasswords };
+            
+            let isDefaultPassword = false;
+
+            if (allUsers[username] && allUsers[username] === password) {
+                // Check if the user is using the default password
+                if (defaultUsers[username] && defaultUsers[username] === password) {
+                    isDefaultPassword = true;
+                }
+                
+                // Successful login
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', username);
+                currentUsername = username;
+                loginModal.classList.remove('active');
+                
+                // Show password change prompt if using default password, otherwise show portal content
+                if (isDefaultPassword) {
+                    passwordModal.classList.add('active');
+                } else {
+                    showPortalContent();
+                }
+                
+            } else {
+                loginMessageBox.classList.remove('hidden');
+                loginMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
+                loginMessageBox.textContent = 'Incorrect username or password. Please try again.';
+            }
+        });
+
+        // Password change functionality
+        passwordChangeForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const newPassword = newPasswordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
+            
+            passwordMessageBox.textContent = '';
+            passwordMessageBox.classList.remove('error', 'success');
+            passwordMessageBox.classList.add('hidden');
+
+            if (newPassword !== confirmPassword) {
+                passwordMessageBox.classList.remove('hidden');
+                passwordMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
+                passwordMessageBox.textContent = 'Passwords do not match.';
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                passwordMessageBox.classList.remove('hidden');
+                passwordMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
+                passwordMessageBox.textContent = 'Password must be at least 8 characters long.';
                 return;
             }
 
-            if (password === 'Loveisadrug') {
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userName', name);
-                loginModal.classList.remove('active');
-                portalContent.style.display = 'block';
-                updateWelcomeMessage(name);
-                updateClock();
-                renderCurrentActivity();
-                currentActivityInterval = setInterval(renderCurrentActivity, 30000); // Check every 30 seconds
-                renderSingleEvent();
-                eventInterval = setInterval(renderSingleEvent, 2000);
-                renderSubjects();
-            } else {
-                showTemporaryMessage('Incorrect credentials.', 'red');
-            }
+            // Save the new password to local storage
+            const savedPasswords = JSON.parse(localStorage.getItem('user_passwords') || '{}');
+            savedPasswords[currentUsername] = newPassword;
+            localStorage.setItem('user_passwords', JSON.stringify(savedPasswords));
+
+            passwordMessageBox.classList.remove('hidden');
+            passwordMessageBox.classList.add('success', 'bg-green-500', 'text-white', 'p-2', 'rounded');
+            passwordMessageBox.textContent = 'Password changed successfully!';
+            
+            // Wait a moment before closing the modal
+            setTimeout(() => {
+                passwordModal.classList.remove('active');
+                showPortalContent();
+            }, 1500);
         });
 
-        passwordInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                loginBtn.click();
+        // The core function to display the main portal content.
+        const showPortalContent = () => {
+            portalContent.style.display = 'flex';
+            const storedName = localStorage.getItem('userName');
+            if (storedName) {
+                updateWelcomeMessage(storedName);
             }
-        });
-        nameInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                loginBtn.click();
-            }
-        });
+            updateClock();
+            renderCurrentActivity();
+            currentActivityInterval = setInterval(renderCurrentActivity, 30000);
+            renderSingleEvent();
+            eventInterval = setInterval(renderSingleEvent, 2000);
+            renderSubjects();
+        };
 
+        // Modal close listeners
         closeTimetableBtn.addEventListener('click', () => {
             timetableModal.classList.remove('active');
             clearInterval(timetableInterval);
@@ -922,6 +1058,11 @@
 
         closeMaterialBtn.addEventListener('click', () => {
             materialModal.classList.remove('active');
+        });
+        
+        closePasswordModal.addEventListener('click', () => {
+            passwordModal.classList.remove('active');
+            showPortalContent();
         });
         
         closePortalBtn.addEventListener('click', () => {
@@ -940,46 +1081,22 @@
             if (event.target === materialModal) {
                 materialModal.classList.remove('active');
             }
+            if (event.target === passwordModal && !event.target.closest('.password-modal-content')) {
+                passwordModal.classList.remove('active');
+                showPortalContent();
+            }
             if (event.target === portalModal) {
                 portalModal.classList.remove('active');
                 portalIframe.src = "";
             }
-            if (event.target === loginModal) {
-                // Prevent closing login modal by clicking outside
-            }
         });
 
-        // Function to show a temporary message box
-        function showTemporaryMessage(message, color) {
-            let messageBox = document.getElementById('message-box');
-            if (!messageBox) {
-                messageBox = document.createElement('div');
-                messageBox.id = 'message-box';
-                messageBox.className = `message-box ${color === 'red' ? 'bg-red-500' : 'bg-green-500'}`;
-                document.body.appendChild(messageBox);
-            }
-            messageBox.textContent = message;
-            messageBox.classList.add('show');
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-            }, 3000);
-        }
-
-        // Initial rendering on page load
+        // Initial check on page load to see if the user is already logged in.
         document.addEventListener('DOMContentLoaded', () => {
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
-                portalContent.style.display = 'block';
-                const storedName = localStorage.getItem('userName');
-                if (storedName) {
-                    updateWelcomeMessage(storedName);
-                }
-                updateClock();
-                renderCurrentActivity();
-                currentActivityInterval = setInterval(renderCurrentActivity, 30000); // Check every 30 seconds
-                renderSingleEvent();
-                eventInterval = setInterval(renderSingleEvent, 2000);
-                renderSubjects();
+                loginModal.classList.remove('active');
+                showPortalContent();
             } else {
                 loginModal.classList.add('active');
             }
