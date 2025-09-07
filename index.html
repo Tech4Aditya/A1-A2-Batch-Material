@@ -577,6 +577,16 @@
         let currentMaterialType = '';
         let timetableInterval;
         let currentActivityInterval;
+        
+        // Load saved passwords with robust error handling
+        let savedPasswords = {};
+        try {
+            savedPasswords = JSON.parse(localStorage.getItem('user_passwords') || '{}');
+        } catch (e) {
+            console.error("Error parsing saved passwords from localStorage:", e);
+            // Optionally clear the corrupted storage
+            localStorage.removeItem('user_passwords');
+        }
 
         // Function to update the digital clock
         const updateClock = () => {
@@ -949,6 +959,25 @@
             materialModal.classList.add('active');
         };
 
+        // Function to check user credentials against both saved and default passwords
+        const checkCredentials = (username, password) => {
+            const savedPassword = savedPasswords[username];
+            const defaultPassword = defaultUsers[username];
+
+            // First, check if a custom password exists and is correct
+            if (savedPassword && savedPassword === password) {
+                return { success: true, isDefault: false };
+            }
+
+            // If not, check against the default password
+            if (defaultPassword && defaultPassword === password) {
+                return { success: true, isDefault: true };
+            }
+
+            // If neither is correct, login fails
+            return { success: false };
+        };
+
         // Login functionality
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -959,26 +988,15 @@
             loginMessageBox.classList.remove('error', 'success');
             loginMessageBox.classList.add('hidden');
 
-            // Load passwords from local storage
-            const savedPasswords = JSON.parse(localStorage.getItem('user_passwords') || '{}');
-            const allUsers = { ...defaultUsers, ...savedPasswords };
-            
-            let isDefaultPassword = false;
+            const result = checkCredentials(username, password);
 
-            if (allUsers[username] && allUsers[username] === password) {
-                // Check if the user is using the default password
-                if (defaultUsers[username] && defaultUsers[username] === password) {
-                    isDefaultPassword = true;
-                }
-                
-                // Successful login
+            if (result.success) {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userName', username);
                 currentUsername = username;
                 loginModal.classList.remove('active');
                 
-                // Show password change prompt if using default password, otherwise show portal content
-                if (isDefaultPassword) {
+                if (result.isDefault) {
                     passwordModal.classList.add('active');
                 } else {
                     showPortalContent();
@@ -1016,9 +1034,8 @@
             }
 
             // Save the new password to local storage
-            const savedPasswords = JSON.parse(localStorage.getItem('user_passwords') || '{}');
-            savedPasswords[currentUsername] = newPassword;
-            localStorage.setItem('user_passwords', JSON.stringify(savedPasswords));
+            const updatedPasswords = { ...savedPasswords, [currentUsername]: newPassword };
+            localStorage.setItem('user_passwords', JSON.stringify(updatedPasswords));
 
             passwordMessageBox.classList.remove('hidden');
             passwordMessageBox.classList.add('success', 'bg-green-500', 'text-white', 'p-2', 'rounded');
