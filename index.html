@@ -37,7 +37,7 @@
         .subject-title {
             text-shadow: 0 0 10px currentColor;
         }
-        .semester-btn {
+        .semester-btn, .chapter-btn {
             background-color: #1f2937;
             color: #d1d5db;
             padding: 0.75rem 1.5rem;
@@ -45,7 +45,7 @@
             border: 1px solid #4b5563;
             transition: all 0.3s ease-in-out;
         }
-        .semester-btn:hover {
+        .semester-btn:hover, .chapter-btn:hover {
             background-color: #2d3748;
             color: #ffffff;
             border-color: #06b6d4;
@@ -148,6 +148,14 @@
             0% { opacity: 0; transform: translateY(20px) scale(0.9); box-shadow: 0 0 0px rgba(6, 182, 212, 0); }
             100% { opacity: 1; transform: translateY(0) scale(1); box-shadow: 0 0 15px rgba(6, 182, 212, 0.5); }
         }
+
+        /* Chapter Buttons */
+        .material-buttons-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -215,6 +223,17 @@
             <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Upcoming Events</h2>
             <div id="all-events-container" class="space-y-4 overflow-y-auto">
                 <!-- All events will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Material Selection Modal -->
+    <div id="material-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-material-modal-btn">&times;</span>
+            <h2 id="material-modal-title" class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Select Material</h2>
+            <div id="material-buttons-container" class="material-buttons-container">
+                <!-- Material buttons will be dynamically inserted here -->
             </div>
         </div>
     </div>
@@ -367,15 +386,21 @@
         const showTimetableBtn = document.getElementById('show-timetable-btn');
         const timetableModal = document.getElementById('timetable-modal');
         const eventsModal = document.getElementById('events-modal');
+        const materialModal = document.getElementById('material-modal');
         const closeTimetableBtn = document.getElementById('close-modal-btn');
         const closeEventsBtn = document.getElementById('close-events-modal-btn');
+        const closeMaterialBtn = document.getElementById('close-material-modal-btn');
         const timetableContent = document.getElementById('timetable-content');
         const showA1Btn = document.getElementById('show-a1-btn');
         const showA2Btn = document.getElementById('show-a2-btn');
-        
-        // State variables for events animation
+        const materialButtonsContainer = document.getElementById('material-buttons-container');
+        const materialModalTitle = document.getElementById('material-modal-title');
+
+        // State variables for events animation and material selection
         let currentEventIndex = 0;
         let eventInterval;
+        let currentSubject = '';
+        let currentMaterialType = '';
 
         // Function to update the digital clock
         const updateClock = () => {
@@ -387,10 +412,9 @@
 
         // Function to render a single upcoming event
         const renderSingleEvent = () => {
-            eventsContainer.innerHTML = ''; // Clear container
+            eventsContainer.innerHTML = '';
             const event = events[currentEventIndex];
             const eventCard = document.createElement('div');
-            // Apply the new animation class here
             eventCard.className = 'bg-gray-800 p-4 rounded-lg flex items-center single-event-card border border-gray-700 hover:bg-gray-700 transition-colors duration-200 animated-event';
             eventCard.innerHTML = `
                 <div class="flex-grow">
@@ -399,7 +423,6 @@
                 </div>
             `;
             eventsContainer.appendChild(eventCard);
-            // Move to the next event for the next cycle
             currentEventIndex = (currentEventIndex + 1) % events.length;
         };
 
@@ -431,9 +454,9 @@
                                 <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </summary>
                             <ul class="mt-2 text-gray-300 list-disc list-inside">
-                                <li><a href="#" class="hover:text-cyan-400">Lecture Notes (PDF)</a></li>
-                                <li><a href="#" class="hover:text-cyan-400">Video Lectures</a></li>
-                                <li><a href="#" class="hover:text-cyan-400">Class Presentations</a></li>
+                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="notes">Lecture Notes (PDF)</li>
+                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="videos">Video Lectures</li>
+                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="presentations">Class Presentations</li>
                             </ul>
                         </details>
                         <details class="bg-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
@@ -453,9 +476,9 @@
                                 <svg class="w-5 h-5 ml-2 transition-transform duration-200 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </summary>
                             <ul class="mt-2 text-gray-300 list-disc list-inside">
-                                <li><a href="#" class="hover:text-cyan-400">Problem Sheets</a></li>
-                                <li><a href="#" class="hover:text-cyan-400">Solution Guides</a></li>
-                                <li><a href="#" class="hover:text-cyan-400">Practice Quizzes</a></li>
+                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="problems">Problem Sheets</li>
+                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="solutions">Solution Guides</li>
+                                <li class="text-white hover:text-cyan-400 cursor-pointer material-link" data-subject="${subject.name}" data-type="quizzes">Practice Quizzes</li>
                             </ul>
                         </details>
                     </div>
@@ -476,18 +499,102 @@
                 }, index * 100);
             });
         };
+
+        // Function to populate and show the material modal
+        const openMaterialModal = (subjectName, materialType) => {
+            currentSubject = subjectName;
+            currentMaterialType = materialType;
+            materialButtonsContainer.innerHTML = '';
+
+            let titleText = '';
+            let buttonTextPrefix = '';
+            switch (materialType) {
+                case 'notes':
+                    titleText = `Select Chapter for ${subjectName} Notes`;
+                    buttonTextPrefix = 'Chapter';
+                    break;
+                case 'videos':
+                    titleText = `Select Video for ${subjectName}`;
+                    buttonTextPrefix = 'Video';
+                    break;
+                case 'presentations':
+                    titleText = `Select Presentation for ${subjectName}`;
+                    buttonTextPrefix = 'Presentation';
+                    break;
+                case 'problems':
+                    titleText = `Select Problem Sheet for ${subjectName}`;
+                    buttonTextPrefix = 'Problem Sheet';
+                    break;
+                case 'solutions':
+                    titleText = `Select Solution Guide for ${subjectName}`;
+                    buttonTextPrefix = 'Solution Guide';
+                    break;
+                case 'quizzes':
+                    titleText = `Select Practice Quiz for ${subjectName}`;
+                    buttonTextPrefix = 'Quiz';
+                    break;
+            }
+
+            materialModalTitle.textContent = titleText;
+
+            for (let i = 1; i <= 5; i++) {
+                const materialBtn = document.createElement('button');
+                materialBtn.className = 'chapter-btn';
+                materialBtn.textContent = `${buttonTextPrefix} ${i}`;
+                materialBtn.dataset.number = i;
+                materialButtonsContainer.appendChild(materialBtn);
+            }
+            materialModal.classList.add('active');
+        };
         
         // Event Listeners
         showTimetableBtn.addEventListener('click', () => {
-            // Clear previous timetable content and show the modal
             timetableContent.innerHTML = '';
             timetableModal.classList.add('active');
         });
 
-        // Event listener for the events section to open the modal
         eventsContainer.addEventListener('click', () => {
             renderAllEvents();
             eventsModal.classList.add('active');
+        });
+
+        // Event delegation for opening the material modal
+        document.addEventListener('click', (event) => {
+            const materialLink = event.target.closest('.material-link');
+            if (materialLink) {
+                const subject = materialLink.dataset.subject;
+                const type = materialLink.dataset.type;
+                openMaterialModal(subject, type);
+            }
+            
+            const materialBtn = event.target.closest('.chapter-btn');
+            if (materialBtn) {
+                const number = materialBtn.dataset.number;
+                const subjectNormalized = currentSubject.replace(/\s/g, '_');
+                let driveLink = '';
+                switch (currentMaterialType) {
+                    case 'notes':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Notes_Chapter_${number}`;
+                        break;
+                    case 'videos':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Videos_No_${number}`;
+                        break;
+                    case 'presentations':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Presentations_No_${number}`;
+                        break;
+                    case 'problems':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Problem_Sheets_No_${number}`;
+                        break;
+                    case 'solutions':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Solution_Guides_No_${number}`;
+                        break;
+                    case 'quizzes':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Practice_Quizzes_No_${number}`;
+                        break;
+                }
+                window.open(driveLink, '_blank');
+                materialModal.classList.remove('active');
+            }
         });
 
         closeTimetableBtn.addEventListener('click', () => {
@@ -498,12 +605,19 @@
             eventsModal.classList.remove('active');
         });
 
+        closeMaterialBtn.addEventListener('click', () => {
+            materialModal.classList.remove('active');
+        });
+
         window.addEventListener('click', (event) => {
             if (event.target == timetableModal) {
                 timetableModal.classList.remove('active');
             }
             if (event.target == eventsModal) {
                 eventsModal.classList.remove('active');
+            }
+            if (event.target == materialModal) {
+                materialModal.classList.remove('active');
             }
         });
 
@@ -521,7 +635,7 @@
             renderContent();
             // Start the event cycling animation
             renderSingleEvent();
-            eventInterval = setInterval(renderSingleEvent, 2000); // 2-second interval for animation
+            eventInterval = setInterval(renderSingleEvent, 2000);
         });
     </script>
 </body>
