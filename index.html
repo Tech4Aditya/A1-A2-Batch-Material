@@ -277,7 +277,7 @@
         </div>
     </div>
 
-    <!-- Password Change Modal -->
+    <!-- Password Change Modal (Kept for UI but not functional) -->
     <div id="password-modal" class="modal">
         <div class="modal-content password-modal-content flex flex-col items-center justify-center">
             <span class="close-btn" id="close-password-modal">&times;</span>
@@ -414,40 +414,6 @@
     </div>
 
     <script>
-        // User credentials stored in an object. This is the default list.
-        const defaultUsers = {
-            "MANYA HANDA": "Mh@4p9zK",
-            "VAIBHAV PANDEY": "Vp#2sW7L",
-            "HARSHIT KUMAR": "Hk$5jR8M",
-            "ARNAV MISHRA": "Am!6yT9N",
-            "SAMYAK KUMAR JAIN": "Sj*7bU0P",
-            "KHYATI POSWAL": "Kp&8cV1Q",
-            "ANANYA SINGH": "As%9dF2R",
-            "DEEPA CHOUDHARY": "Dc^0eG3S",
-            "AYAAN IQBAL": "Ai(1fH4T",
-            "DEVANG KUMAR": "Dk)2gI5U",
-            "DIPANSH DAS": "Dd+3hJ6V",
-            "AKRITI SRIVASTAVA": "As_4iK7W",
-            "MOHAMMAD AZHAN BIN RIYAZ": "Ma-5jL8X",
-            "SHREYA GUPTA": "Sg=6kM9Y",
-            "MANYA RASTOGI": "Mr?7lN0Z",
-            "URVI MISHRA": "Um@8oP1a",
-            "ISHITA GARG": "Ig#9qS2b",
-            "RIYA JAIN": "Rj$0rT3c",
-            "ARYAN SINGH CHHETRI": "Ac%1uV4d",
-            "RITUL R KUMAR": "Rk^2vW5e",
-            "ANUSUYA MUKHERJEE": "Am&3xX6f",
-            "DISHITA SINGH": "Ds*4yY7g",
-            "BHAVYA CHUGH": "Bc!5zZ8h",
-            "ANYA SINGH": "As(6aA9i",
-            "KRISHIV CHAWLA": "Kc)7bB0j",
-            "SARVENDRA VIKRAM": "Sv+8cC1k",
-            "MANAN BHATIA": "Mb_9dD2l",
-            "AKSHARR SONI": "As-0eE3m",
-            "VEDANT JAIN": "Vj=1fF4n",
-            "ADITYA PANDEY (ADMIN)": "ADIVIGI" // New user added
-        };
-
         let currentUsername = null;
         
         // Subject data
@@ -541,11 +507,9 @@
         const eventsModal = document.getElementById('events-modal');
         const materialModal = document.getElementById('material-modal');
         const loginModal = document.getElementById('login-modal');
-        const passwordModal = document.getElementById('password-modal');
         const closeTimetableBtn = document.getElementById('close-modal-btn');
         const closeEventsBtn = document.getElementById('close-events-modal-btn');
         const closeMaterialBtn = document.getElementById('close-material-modal-btn');
-        const closePasswordModal = document.getElementById('close-password-modal');
         const timetableContent = document.getElementById('timetable-content');
         const materialButtonsContainer = document.getElementById('material-buttons-container');
         const materialModalTitle = document.getElementById('material-modal-title');
@@ -564,12 +528,6 @@
         const passwordInput = document.getElementById('password');
         const loginMessageBox = document.getElementById('login-message-box');
 
-        // Password change form elements
-        const passwordChangeForm = document.getElementById('password-change-form');
-        const newPasswordInput = document.getElementById('new-password');
-        const confirmPasswordInput = document.getElementById('confirm-password');
-        const passwordMessageBox = document.getElementById('password-message-box');
-
         // State variables
         let currentEventIndex = 0;
         let eventInterval;
@@ -578,16 +536,6 @@
         let timetableInterval;
         let currentActivityInterval;
         
-        // Load saved passwords with robust error handling
-        let savedPasswords = {};
-        try {
-            savedPasswords = JSON.parse(localStorage.getItem('user_passwords') || '{}');
-        } catch (e) {
-            console.error("Error parsing saved passwords from localStorage:", e);
-            // Optionally clear the corrupted storage
-            localStorage.removeItem('user_passwords');
-        }
-
         // Function to update the digital clock
         const updateClock = () => {
             const now = new Date();
@@ -959,93 +907,28 @@
             materialModal.classList.add('active');
         };
 
-        // Function to check user credentials against both saved and default passwords
-        const checkCredentials = (username, password) => {
-            const savedPassword = savedPasswords[username];
-            const defaultPassword = defaultUsers[username];
-
-            // First, check if a custom password exists and is correct
-            if (savedPassword && savedPassword === password) {
-                return { success: true, isDefault: false };
-            }
-
-            // If not, check against the default password
-            if (defaultPassword && defaultPassword === password) {
-                return { success: true, isDefault: true };
-            }
-
-            // If neither is correct, login fails
-            return { success: false };
-        };
-
         // Login functionality
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            const username = usernameInput.value.trim().toUpperCase();
+            const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
             
             loginMessageBox.textContent = '';
             loginMessageBox.classList.remove('error', 'success');
             loginMessageBox.classList.add('hidden');
 
-            const result = checkCredentials(username, password);
-
-            if (result.success) {
+            // Hardcoded check for the single password "A2PORTAL"
+            if (password === 'A2PORTAL' && username !== '') {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userName', username);
                 currentUsername = username;
                 loginModal.classList.remove('active');
-                
-                if (result.isDefault) {
-                    passwordModal.classList.add('active');
-                } else {
-                    showPortalContent();
-                }
-                
+                showPortalContent();
             } else {
                 loginMessageBox.classList.remove('hidden');
                 loginMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
-                loginMessageBox.textContent = 'Incorrect username or password. Please try again.';
+                loginMessageBox.textContent = 'Incorrect password. Please try again.';
             }
-        });
-
-        // Password change functionality
-        passwordChangeForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const newPassword = newPasswordInput.value.trim();
-            const confirmPassword = confirmPasswordInput.value.trim();
-            
-            passwordMessageBox.textContent = '';
-            passwordMessageBox.classList.remove('error', 'success');
-            passwordMessageBox.classList.add('hidden');
-
-            if (newPassword !== confirmPassword) {
-                passwordMessageBox.classList.remove('hidden');
-                passwordMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
-                passwordMessageBox.textContent = 'Passwords do not match.';
-                return;
-            }
-            
-            if (newPassword.length < 8) {
-                passwordMessageBox.classList.remove('hidden');
-                passwordMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
-                passwordMessageBox.textContent = 'Password must be at least 8 characters long.';
-                return;
-            }
-
-            // Save the new password to local storage
-            const updatedPasswords = { ...savedPasswords, [currentUsername]: newPassword };
-            localStorage.setItem('user_passwords', JSON.stringify(updatedPasswords));
-
-            passwordMessageBox.classList.remove('hidden');
-            passwordMessageBox.classList.add('success', 'bg-green-500', 'text-white', 'p-2', 'rounded');
-            passwordMessageBox.textContent = 'Password changed successfully!';
-            
-            // Wait a moment before closing the modal
-            setTimeout(() => {
-                passwordModal.classList.remove('active');
-                showPortalContent();
-            }, 1500);
         });
 
         // The core function to display the main portal content.
@@ -1077,11 +960,6 @@
             materialModal.classList.remove('active');
         });
         
-        closePasswordModal.addEventListener('click', () => {
-            passwordModal.classList.remove('active');
-            showPortalContent();
-        });
-        
         closePortalBtn.addEventListener('click', () => {
             portalModal.classList.remove('active');
             portalIframe.src = ""; // Stop loading the iframe content
@@ -1097,10 +975,6 @@
             }
             if (event.target === materialModal) {
                 materialModal.classList.remove('active');
-            }
-            if (event.target === passwordModal && !event.target.closest('.password-modal-content')) {
-                passwordModal.classList.remove('active');
-                showPortalContent();
             }
             if (event.target === portalModal) {
                 portalModal.classList.remove('active');
