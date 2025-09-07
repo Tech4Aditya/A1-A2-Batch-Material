@@ -15,7 +15,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #0d1117;
             color: #e2e8f0;
-            overflow-x: hidden; /* Prevents horizontal scroll on animations */
+            overflow-x: hidden;
         }
         .futuristic-card {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -114,6 +114,12 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+        .name-modal-content {
+            width: 90%;
+            max-width: 500px;
+            height: auto;
+            padding: 2rem;
+        }
         .close-btn {
             position: absolute;
             top: 10px;
@@ -166,21 +172,22 @@
             View Timetable
         </button>
         <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
-            JIIT A2 Study Portal
+            JIIT A2 STUDY PORTAL
         </h1>
         <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 flex-grow-0 glow-container"></div>
     </header>
+    
+    <!-- Welcome and User Info Section -->
+    <section id="user-info-section" class="text-center py-8">
+        <h2 id="welcome-message" class="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-lime-500">Welcome, Student!</h2>
+        <button id="set-name-btn" class="mt-2 text-sm text-gray-400 hover:text-cyan-400 transition-colors">
+            Set My Name
+        </button>
+    </section>
 
     <!-- Main Content -->
     <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 transition-all duration-500 ease-out">
         
-        <!-- Welcome Section: Hidden since the portal content loads by default -->
-        <section class="text-center mb-16 hidden" id="welcome-section">
-            <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-                Your one-stop destination for all academic materials for Basic Electronics, SDF, Physics, and Maths. Find everything you need for lectures, labs, and tutorials.
-            </p>
-        </section>
-
         <!-- Upcoming Events & Timetable Section -->
         <section class="mb-12">
             <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Events & Schedule</h2>
@@ -234,18 +241,30 @@
         </div>
     </div>
 
+    <!-- Name Input Modal -->
+    <div id="name-modal" class="modal">
+        <div class="modal-content name-modal-content flex flex-col items-center justify-center">
+            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">What should I call you?</h2>
+            <input type="text" id="name-input" placeholder="Enter your name" class="w-full max-w-sm px-4 py-2 my-4 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400">
+            <button id="save-name-btn" class="semester-btn text-base p-2 w-full max-w-xs glow-container">
+                Save Name
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Data for subjects and upcoming events
+        // Subject data
         const subjects = [
             { name: 'Basic Electronics', color: 'text-purple-400' },
             { name: 'SDF', color: 'text-orange-400' },
             { name: 'Physics', color: 'text-lime-400' },
             { name: 'Maths', color: 'text-pink-400' }
         ];
-        
-        const timetableA2 = `
+
+        // Timetable data
+        const timetableData = `
             <div class="md:col-span-4 col-span-1 md:my-8 my-4">
-                <h2 class="text-xl md:text-3xl font-bold mb-4 text-cyan-300 text-center subject-title">Timetable A2 Section</h2>
+                <h2 class="text-xl md:text-3xl font-bold mb-4 text-cyan-300 text-center subject-title">Class Timetable</h2>
                 <div class="overflow-x-auto bg-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg">
                     <table class="w-full text-sm md:text-base">
                         <thead>
@@ -304,7 +323,7 @@
                 </div>
             </div>
         `;
-
+        
         const events = [
             { title: 'SDF Evaluation-1', date: 'Sept 11, 2025', time: '09:00 AM' },
             { title: 'Physics Lab Examination', date: 'Tentatively from Sept 2025', time: '' },
@@ -312,7 +331,6 @@
         ];
 
         // Element references
-        const mainContent = document.getElementById('main-content');
         const subjectsContainer = document.getElementById('subjects-container');
         const eventsContainer = document.getElementById('events-container');
         const allEventsContainer = document.getElementById('all-events-container');
@@ -321,14 +339,19 @@
         const timetableModal = document.getElementById('timetable-modal');
         const eventsModal = document.getElementById('events-modal');
         const materialModal = document.getElementById('material-modal');
+        const nameModal = document.getElementById('name-modal');
         const closeTimetableBtn = document.getElementById('close-modal-btn');
         const closeEventsBtn = document.getElementById('close-events-modal-btn');
         const closeMaterialBtn = document.getElementById('close-material-modal-btn');
         const timetableContent = document.getElementById('timetable-content');
         const materialButtonsContainer = document.getElementById('material-buttons-container');
         const materialModalTitle = document.getElementById('material-modal-title');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const setNameBtn = document.getElementById('set-name-btn');
+        const nameInput = document.getElementById('name-input');
+        const saveNameBtn = document.getElementById('save-name-btn');
 
-        // State variables for events animation and material selection
+        // State variables
         let currentEventIndex = 0;
         let eventInterval;
         let currentSubject = '';
@@ -351,7 +374,7 @@
             eventCard.innerHTML = `
                 <div class="flex-grow">
                     <h3 class="font-semibold text-gray-200">${event.title}</h3>
-                    <p class="text-sm text-gray-400">${event.date} at ${event.time}</p>
+                    <p class="text-sm text-gray-400">${event.date} ${event.time}</p>
                 </div>
             `;
             eventsContainer.appendChild(eventCard);
@@ -367,14 +390,14 @@
                 eventCard.innerHTML = `
                     <div class="flex-grow">
                         <h3 class="font-semibold text-gray-200">${event.title}</h3>
-                        <p class="text-sm text-gray-400">${event.date} at ${event.time}</p>
+                        <p class="text-sm text-gray-400">${event.date} ${event.time}</p>
                     </div>
                 `;
                 allEventsContainer.appendChild(eventCard);
             });
         };
 
-        // Function to create a subject card HTML string
+        // Function to create a subject card
         const createSubjectCard = (subject) => {
             return `
                 <div class="bg-gray-900 p-6 rounded-2xl border border-gray-700 futuristic-card">
@@ -418,8 +441,8 @@
             `;
         };
 
-        // Function to render subject cards on initial load
-        const renderContent = () => {
+        // Function to render subject cards
+        const renderSubjects = () => {
             subjectsContainer.innerHTML = '';
             subjects.forEach((subject, index) => {
                 const tempContainer = document.createElement('div');
@@ -432,6 +455,67 @@
             });
         };
 
+        // Function to update the welcome message
+        const updateWelcomeMessage = (name) => {
+            if (name) {
+                welcomeMessage.textContent = `Welcome, ${name}!`;
+                setNameBtn.textContent = 'Change Name';
+            } else {
+                welcomeMessage.textContent = `Welcome, Student!`;
+                setNameBtn.textContent = 'Set My Name';
+            }
+        };
+
+        // Event Listeners
+        showTimetableBtn.addEventListener('click', () => {
+            timetableContent.innerHTML = timetableData;
+            timetableModal.classList.add('active');
+        });
+
+        eventsContainer.addEventListener('click', () => {
+            renderAllEvents();
+            eventsModal.classList.add('active');
+        });
+        
+        // Event delegation for opening the material modal
+        document.addEventListener('click', (event) => {
+            const materialLink = event.target.closest('.material-link');
+            if (materialLink) {
+                const subject = materialLink.dataset.subject;
+                const type = materialLink.dataset.type;
+                openMaterialModal(subject, type);
+            }
+            
+            const materialBtn = event.target.closest('.chapter-btn');
+            if (materialBtn) {
+                const number = materialBtn.dataset.number;
+                const subjectNormalized = currentSubject.replace(/\s/g, '_');
+                let driveLink = '';
+                switch (currentMaterialType) {
+                    case 'notes':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Notes_Chapter_${number}`;
+                        break;
+                    case 'videos':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Videos_No_${number}`;
+                        break;
+                    case 'presentations':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Presentations_No_${number}`;
+                        break;
+                    case 'problems':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Problem_Sheets_No_${number}`;
+                        break;
+                    case 'solutions':
+                        driveLink = `https://drive.com/drive/folders/${subjectNormalized}_Solution_Guides_No_${number}`;
+                        break;
+                    case 'quizzes':
+                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Practice_Quizzes_No_${number}`;
+                        break;
+                }
+                window.open(driveLink, '_blank');
+                materialModal.classList.remove('active');
+            }
+        });
+        
         // Function to populate and show the material modal
         const openMaterialModal = (subjectName, materialType) => {
             currentSubject = subjectName;
@@ -461,7 +545,7 @@
                     titleText = `Select Solution Guide for ${subjectName}`;
                     buttonTextPrefix = 'Solution Guide';
                     break;
-                case 'quizzes':
+                    case 'quizzes':
                     titleText = `Select Practice Quiz for ${subjectName}`;
                     buttonTextPrefix = 'Quiz';
                     break;
@@ -478,54 +562,24 @@
             }
             materialModal.classList.add('active');
         };
-        
-        // Event Listeners
-        showTimetableBtn.addEventListener('click', () => {
-            timetableContent.innerHTML = timetableA2;
-            timetableModal.classList.add('active');
-        });
 
-        eventsContainer.addEventListener('click', () => {
-            renderAllEvents();
-            eventsModal.classList.add('active');
-        });
-
-        // Event delegation for opening the material modal
-        document.addEventListener('click', (event) => {
-            const materialLink = event.target.closest('.material-link');
-            if (materialLink) {
-                const subject = materialLink.dataset.subject;
-                const type = materialLink.dataset.type;
-                openMaterialModal(subject, type);
+        // Name input functionality
+        setNameBtn.addEventListener('click', () => {
+            nameModal.classList.add('active');
+            const storedName = localStorage.getItem('userName');
+            if (storedName) {
+                nameInput.value = storedName;
             }
-            
-            const materialBtn = event.target.closest('.chapter-btn');
-            if (materialBtn) {
-                const number = materialBtn.dataset.number;
-                const subjectNormalized = currentSubject.replace(/\s/g, '_');
-                let driveLink = '';
-                switch (currentMaterialType) {
-                    case 'notes':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Notes_Chapter_${number}`;
-                        break;
-                    case 'videos':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Videos_No_${number}`;
-                        break;
-                    case 'presentations':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Presentations_No_${number}`;
-                        break;
-                    case 'problems':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Problem_Sheets_No_${number}`;
-                        break;
-                    case 'solutions':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Solution_Guides_No_${number}`;
-                        break;
-                    case 'quizzes':
-                        driveLink = `https://drive.google.com/drive/folders/${subjectNormalized}_Practice_Quizzes_No_${number}`;
-                        break;
-                }
-                window.open(driveLink, '_blank');
-                materialModal.classList.remove('active');
+        });
+
+        saveNameBtn.addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            if (name) {
+                localStorage.setItem('userName', name);
+                updateWelcomeMessage(name);
+                nameModal.classList.remove('active');
+            } else {
+                alert('Please enter a name.');
             }
         });
 
@@ -542,24 +596,33 @@
         });
 
         window.addEventListener('click', (event) => {
-            if (event.target == timetableModal) {
+            if (event.target === timetableModal) {
                 timetableModal.classList.remove('active');
             }
-            if (event.target == eventsModal) {
+            if (event.target === eventsModal) {
                 eventsModal.classList.remove('active');
             }
-            if (event.target == materialModal) {
+            if (event.target === materialModal) {
                 materialModal.classList.remove('active');
+            }
+            if (event.target === nameModal) {
+                nameModal.classList.remove('active');
             }
         });
 
         // Initial rendering on page load
         document.addEventListener('DOMContentLoaded', () => {
             updateClock();
-            renderContent();
-            // Start the event cycling animation
             renderSingleEvent();
             eventInterval = setInterval(renderSingleEvent, 2000);
+            renderSubjects();
+
+            const storedName = localStorage.getItem('userName');
+            if (storedName) {
+                updateWelcomeMessage(storedName);
+            } else {
+                nameModal.classList.add('active');
+            }
         });
     </script>
 </body>
