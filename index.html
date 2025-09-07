@@ -37,7 +37,7 @@
         .subject-title {
             text-shadow: 0 0 10px currentColor;
         }
-        .semester-btn, .chapter-btn {
+        .semester-btn, .chapter-btn, .day-btn {
             background-color: #1f2937;
             color: #d1d5db;
             padding: 0.75rem 1.5rem;
@@ -45,10 +45,16 @@
             border: 1px solid #4b5563;
             transition: all 0.3s ease-in-out;
         }
-        .semester-btn:hover, .chapter-btn:hover {
+        .semester-btn:hover, .chapter-btn:hover, .day-btn:hover {
             background-color: #2d3748;
             color: #ffffff;
             border-color: #06b6d4;
+        }
+        .day-btn.active {
+            background-color: #06b6d4;
+            color: #ffffff;
+            border-color: #06b6d4;
+            box-shadow: 0 0 10px #06b6d4;
         }
         .semester-dropdown {
             background-color: rgba(17, 24, 39, 0.8);
@@ -133,11 +139,7 @@
         .close-btn:hover {
             color: #ef4444;
         }
-        .timetable-cell {
-            padding: 0.5rem;
-            border: 1px solid #2d3748;
-            text-align: center;
-        }
+        
         .single-event-card {
             cursor: pointer;
             transition: transform 0.3s ease-in-out;
@@ -183,6 +185,9 @@
             transform: translateY(0);
             opacity: 1;
         }
+        .current-class-glow {
+            animation: pulse-glow 1.5s infinite;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -202,7 +207,7 @@
     <div id="portal-content" class="flex flex-col min-h-screen">
         <!-- Header with Clock and Timetable button -->
         <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex justify-between items-center flex-wrap gap-4">
-            <button id="show-timetable-btn" class="semester-btn text-base p-2 glow-container">
+            <button id="show-timetable-btn" class="semester-btn text-base p-2">
                 View Timetable
             </button>
             <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center flex-grow">
@@ -218,6 +223,14 @@
 
         <!-- Main Content -->
         <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 transition-all duration-500 ease-out">
+            
+            <!-- Current Class/Break Section -->
+            <section class="mb-12">
+                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Current Activity</h2>
+                <div id="current-activity-container" class="space-y-4">
+                    <!-- Dynamic content inserted here -->
+                </div>
+            </section>
             
             <!-- Upcoming Events & Timetable Section -->
             <section class="mb-12">
@@ -242,7 +255,7 @@
 
     <!-- Timetable Modal -->
     <div id="timetable-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content md:p-8 p-4">
             <span class="close-btn" id="close-modal-btn">&times;</span>
             <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Class Timetable</h2>
             <div id="timetable-content" class="overflow-y-auto w-full h-full">
@@ -276,74 +289,77 @@
     <script>
         // Subject data
         const subjects = [
-            { name: 'Basic Electronics', color: 'text-purple-400' },
+            { name: 'Basic Electronics', color: 'text-red-400' },
             { name: 'SDF', color: 'text-orange-400' },
             { name: 'Physics', color: 'text-lime-400' },
-            { name: 'Maths', color: 'text-pink-400' }
+            { name: 'Maths', color: 'text-pink-400' },
+            { name: 'English', color: 'text-teal-400' },
+            { name: 'Engineering Drawing', color: 'text-yellow-400' }
         ];
 
         // Timetable data
-        const timetableData = `
-            <div class="md:col-span-4 col-span-1 md:my-8 my-4">
-                <h2 class="text-xl md:text-3xl font-bold mb-4 text-cyan-300 text-center subject-title">Class Timetable</h2>
-                <div class="overflow-x-auto bg-gray-900 rounded-xl p-4 border border-gray-700 shadow-lg">
-                    <table class="w-full text-sm md:text-base">
-                        <thead>
-                            <tr class="bg-gray-800">
-                                <th class="timetable-cell">Time</th>
-                                <th class="timetable-cell">Monday</th>
-                                <th class="timetable-cell">Tuesday</th>
-                                <th class="timetable-cell">Wednesday</th>
-                                <th class="timetable-cell">Thursday</th>
-                                <th class="timetable-cell">Friday</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="hover:bg-gray-700">
-                                <td class="timetable-cell">09:00 - 10:00</td>
-                                <td class="timetable-cell">SDF</td>
-                                <td class="timetable-cell">BEE</td>
-                                <td class="timetable-cell">Maths</td>
-                                <td class="timetable-cell">Physics</td>
-                                <td class="timetable-cell">Break</td>
-                            </tr>
-                            <tr class="hover:bg-gray-700">
-                                <td class="timetable-cell">10:00 - 11:00</td>
-                                <td class="timetable-cell">BEE</td>
-                                <td class="timetable-cell">SDF</td>
-                                <td class="timetable-cell">Physics</td>
-                                <td class="timetable-cell">Maths</td>
-                                <td class="timetable-cell">Break</td>
-                            </tr>
-                            <tr class="hover:bg-gray-700">
-                                <td class="timetable-cell">11:00 - 12:00</td>
-                                <td class="timetable-cell">BEE Lab</td>
-                                <td class="timetable-cell">SDF Lab</td>
-                                <td class="timetable-cell">Maths Lab</td>
-                                <td class="timetable-cell">Physics Lab</td>
-                                <td class="timetable-cell">Break</td>
-                            </tr>
-                            <tr class="hover:bg-gray-700">
-                                <td class="timetable-cell">12:00 - 13:00</td>
-                                <td class="timetable-cell">Lunch</td>
-                                <td class="timetable-cell">Lunch</td>
-                                <td class="timetable-cell">Lunch</td>
-                                <td class="timetable-cell">Lunch</td>
-                                <td class="timetable-cell">Lunch</td>
-                            </tr>
-                             <tr class="hover:bg-gray-700">
-                                <td class="timetable-cell">13:00 - 14:00</td>
-                                <td class="timetable-cell">SDF</td>
-                                <td class="timetable-cell">Maths</td>
-                                <td class="timetable-cell">Physics</td>
-                                <td class="timetable-cell">BEE</td>
-                                <td class="timetable-cell">Break</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
+        const timetableData = [
+            {
+                day: 'Monday',
+                classes: [
+                    { time: '10:00 - 11:00', subject: 'Physics', type: 'Lecture', icon: '👨‍🏫', color: 'lime' },
+                    { time: '11:00 - 12:00', subject: 'Maths', type: 'Lecture', icon: '👨‍🏫', color: 'pink' },
+                    { time: '12:00 PM - 1:00 PM', subject: 'Break', type: '', icon: '☕', color: 'gray' },
+                    { time: '01:00 PM - 03:00 PM', subject: 'Physics', type: 'Lab', icon: '🔬', color: 'lime' },
+                    { time: '03:00 PM - 05:00 PM', subject: 'Basic Electronics', type: 'Lab', icon: '🔬', color: 'red' },
+                ]
+            },
+            {
+                day: 'Tuesday',
+                classes: [
+                    { time: '09:00 - 10:00', subject: 'Physics', type: 'Tutorial', icon: '🗣️', color: 'lime' },
+                    { time: '10:00 - 11:00', subject: 'Basic Electronics', type: 'Lecture', icon: '👨‍🏫', color: 'red' },
+                    { time: '11:00 - 12:00', subject: 'SDF', type: 'Lecture', icon: '👨‍🏫', color: 'orange' },
+                    { time: '12:00 PM - 1:00 PM', subject: 'Break', type: '', icon: '☕', color: 'gray' },
+                    { time: '01:00 PM - 04:00 PM', subject: 'Engineering Drawing', type: 'Lab', icon: '🔬', color: 'yellow' },
+                ]
+            },
+            {
+                day: 'Wednesday',
+                classes: [
+                    { time: '10:00 - 11:00', subject: 'English', type: 'Lecture', icon: '👨‍🏫', color: 'teal' },
+                    { time: '11:00 - 12:00', subject: 'Basic Electronics', type: 'Lecture', icon: '👨‍🏫', color: 'red' },
+                    { time: '12:00 PM - 1:00 PM', subject: 'Break', type: '', icon: '☕', color: 'gray' },
+                    { time: '01:00 PM - 03:00 PM', subject: 'English', type: 'Lab', icon: '🔬', color: 'teal' },
+                    { time: '03:00 PM - 04:00', subject: 'SDF', type: 'Lecture', icon: '👨‍🏫', color: 'orange' },
+                ]
+            },
+            {
+                day: 'Thursday',
+                classes: [
+                    { time: '09:00 - 11:00', subject: 'SDF', type: 'Lab', icon: '🔬', color: 'orange' },
+                    { time: '11:00 - 01:00 PM', subject: 'Break', type: '', icon: '☕', color: 'gray' },
+                    { time: '01:00 PM - 02:00 PM', subject: 'Physics', type: 'Lecture', icon: '👨‍🏫', color: 'lime' },
+                    { time: '02:00 PM - 03:00 PM', subject: 'Maths', type: 'Lecture', icon: '👨‍🏫', color: 'pink' },
+                ]
+            },
+            {
+                day: 'Friday',
+                classes: [
+                    { time: '09:00 - 10:00', subject: 'Maths', type: 'Tutorial', icon: '🗣️', color: 'pink' },
+                    { time: '10:00 - 11:00', subject: 'Basic Electronics', type: 'Tutorial', icon: '🗣️', color: 'red' },
+                    { time: '11:00 - 12:00', subject: 'Physics', type: 'Lecture', icon: '👨‍🏫', color: 'lime' },
+                    { time: '12:00 PM - 1:00 PM', subject: 'Break', type: '', icon: '☕', color: 'gray' },
+                    { time: '01:00 PM - 02:00 PM', subject: 'Maths', type: 'Lecture', icon: '👨‍🏫', color: 'pink' },
+                    { time: '02:00 PM - 03:00 PM', subject: 'SDF', type: 'Tutorial', icon: '🗣️', color: 'orange' },
+                    { time: '03:00 PM - 04:00 PM', subject: 'Basic Electronics', type: 'Lecture', icon: '👨‍🏫', color: 'red' },
+                    { time: '04:00 PM - 05:00 PM', subject: 'SDF', type: 'Lecture', icon: '👨‍🏫', color: 'orange' },
+                ]
+            },
+            {
+                day: 'Saturday',
+                classes: []
+            },
+            {
+                day: 'Sunday',
+                classes: []
+            }
+        ];
         
         const events = [
             { title: 'SDF Evaluation-1', date: 'Sept 11, 2025', time: '09:00 AM' },
@@ -372,12 +388,15 @@
         const nameInput = document.getElementById('name-input');
         const passwordInput = document.getElementById('password-input');
         const loginBtn = document.getElementById('login-btn');
+        const currentActivityContainer = document.getElementById('current-activity-container');
 
         // State variables
         let currentEventIndex = 0;
         let eventInterval;
         let currentSubject = '';
         let currentMaterialType = '';
+        let timetableInterval;
+        let currentActivityInterval;
 
         // Function to update the digital clock
         const updateClock = () => {
@@ -386,6 +405,92 @@
             clockElement.textContent = time;
         };
         setInterval(updateClock, 1000);
+
+        // Helper to parse time strings
+        const parseTime = (timeStr) => {
+            const now = new Date();
+            let [start, end] = timeStr.replace('PM', '').split(' - ').map(t => {
+                const parts = t.trim().split(':');
+                let hour = parseInt(parts[0]);
+                const minutes = parseInt(parts[1]);
+                if (t.includes('PM') && hour !== 12) {
+                    hour += 12;
+                }
+                if (t.includes('AM') && hour === 12) {
+                    hour = 0;
+                }
+                const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minutes);
+                return date;
+            });
+            if (end < start) {
+                end.setDate(end.getDate() + 1);
+            }
+            return { start, end };
+        };
+
+        // New function to render the current activity on the main page
+        const renderCurrentActivity = () => {
+            const now = new Date();
+            const currentDayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
+            const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+            const todayTimetable = timetableData.find(d => d.day === currentDayOfWeek);
+            let currentActivity = null;
+            let upcomingActivity = null;
+
+            if (todayTimetable) {
+                currentActivity = todayTimetable.classes.find(cls => {
+                    const { start, end } = parseTime(cls.time);
+                    const startTimeInMinutes = start.getHours() * 60 + start.getMinutes();
+                    const endTimeInMinutes = end.getHours() * 60 + end.getMinutes();
+                    return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes;
+                });
+
+                if (!currentActivity) {
+                    upcomingActivity = todayTimetable.classes.find(cls => {
+                        const { start } = parseTime(cls.time);
+                        const startTimeInMinutes = start.getHours() * 60 + start.getMinutes();
+                        return startTimeInMinutes > currentTimeInMinutes;
+                    });
+                }
+            }
+
+            if (currentActivity) {
+                currentActivityContainer.innerHTML = `
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 animated-event current-class-glow">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-3xl">${currentActivity.icon}</span>
+                            <div>
+                                <h3 class="font-semibold text-white text-xl">Current Class: ${currentActivity.subject}</h3>
+                                <p class="text-sm text-gray-400">${currentActivity.type}</p>
+                                <p class="text-sm text-gray-500">${currentActivity.time}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                showTimetableBtn.classList.add('glow-container');
+            } else if (upcomingActivity) {
+                currentActivityContainer.innerHTML = `
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 animated-event">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-3xl">${upcomingActivity.icon}</span>
+                            <div>
+                                <h3 class="font-semibold text-white text-xl">Upcoming: ${upcomingActivity.subject}</h3>
+                                <p class="text-sm text-gray-400">${upcomingActivity.type}</p>
+                                <p class="text-sm text-gray-500">${upcomingActivity.time}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                showTimetableBtn.classList.add('glow-container');
+            } else {
+                currentActivityContainer.innerHTML = `
+                    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 animated-event text-center">
+                        <p class="text-lg text-gray-400">No classes scheduled at this time.</p>
+                    </div>
+                `;
+                showTimetableBtn.classList.remove('glow-container');
+            }
+        };
 
         // Function to render a single upcoming event
         const renderSingleEvent = () => {
@@ -465,15 +570,99 @@
             }
         };
 
+        // New function to render the timetable for a specific day
+        const renderTimetable = (selectedDay) => {
+            const now = new Date();
+            const currentDayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
+            
+            const selectedDayData = timetableData.find(d => d.day === selectedDay);
+
+            if (!selectedDayData) {
+                timetableContent.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-xl text-gray-400">No classes scheduled for today.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinute;
+            const isCurrentDay = (selectedDay === currentDayOfWeek);
+
+            const classCards = selectedDayData.classes.map(cls => {
+                const { start, end } = parseTime(cls.time);
+                const startTimeInMinutes = start.getHours() * 60 + start.getMinutes();
+                const endTimeInMinutes = end.getHours() * 60 + end.getMinutes();
+
+                const isCurrentClass = isCurrentDay && (currentTime >= startTimeInMinutes && currentTime < endTimeInMinutes);
+                
+                return `
+                    <div class="bg-gray-900 rounded-lg p-3 text-sm flex items-center justify-between border-l-4 border-${cls.color}-400 ${isCurrentClass ? 'current-class-glow' : ''}">
+                        <div>
+                            <p class="font-medium text-white">${cls.subject} <span class="text-gray-400 font-normal">(${cls.type})</span></p>
+                            <p class="text-xs text-gray-500">${cls.time}</p>
+                        </div>
+                        <span class="text-xl">${cls.icon}</span>
+                    </div>
+                `;
+            }).join('');
+
+            const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const dayButtons = daysOfWeek.map(day => `
+                <button class="day-btn text-xs md:text-sm ${day === selectedDay ? 'active' : ''}" data-day="${day}">${day.substring(0, 3)}</button>
+            `).join('');
+
+            timetableContent.innerHTML = `
+                <div class="flex justify-center space-x-2 md:space-x-4 mb-6" id="day-buttons-container">
+                    ${dayButtons}
+                </div>
+                <div class="p-4 rounded-xl shadow-xl border border-gray-700 bg-gray-800">
+                    <h3 class="text-xl font-bold text-center mb-4 text-cyan-300">${selectedDay}</h3>
+                    <div class="space-y-3">
+                        ${classCards}
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Periodically update the timetable
+        const startTimetableUpdates = () => {
+            if (timetableInterval) clearInterval(timetableInterval);
+            timetableInterval = setInterval(() => {
+                const now = new Date();
+                const currentDayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
+                // Only update the view if the current day is being shown
+                const activeDayBtn = document.querySelector('.day-btn.active');
+                if (activeDayBtn && activeDayBtn.dataset.day === currentDayOfWeek) {
+                    renderTimetable(currentDayOfWeek);
+                }
+            }, 60000); // Update every minute
+        };
+
         // Event Listeners
         showTimetableBtn.addEventListener('click', () => {
-            timetableContent.innerHTML = timetableData;
+            const now = new Date();
+            const currentDayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
+            renderTimetable(currentDayOfWeek);
             timetableModal.classList.add('active');
+            startTimetableUpdates();
         });
 
         eventsContainer.addEventListener('click', () => {
             renderAllEvents();
             eventsModal.classList.add('active');
+        });
+        
+        // Event delegation for day buttons
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('day-btn')) {
+                const day = event.target.dataset.day;
+                renderTimetable(day);
+                // Clear and restart the live update interval
+                startTimetableUpdates();
+            }
         });
         
         // Event delegation for opening the material modal
@@ -577,6 +766,8 @@
                 portalContent.style.display = 'block';
                 updateWelcomeMessage(name);
                 updateClock();
+                renderCurrentActivity();
+                currentActivityInterval = setInterval(renderCurrentActivity, 30000); // Check every 30 seconds
                 renderSingleEvent();
                 eventInterval = setInterval(renderSingleEvent, 2000);
                 renderSubjects();
@@ -598,6 +789,7 @@
 
         closeTimetableBtn.addEventListener('click', () => {
             timetableModal.classList.remove('active');
+            clearInterval(timetableInterval);
         });
 
         closeEventsBtn.addEventListener('click', () => {
@@ -611,6 +803,7 @@
         window.addEventListener('click', (event) => {
             if (event.target === timetableModal) {
                 timetableModal.classList.remove('active');
+                clearInterval(timetableInterval);
             }
             if (event.target === eventsModal) {
                 eventsModal.classList.remove('active');
@@ -649,6 +842,8 @@
                     updateWelcomeMessage(storedName);
                 }
                 updateClock();
+                renderCurrentActivity();
+                currentActivityInterval = setInterval(renderCurrentActivity, 30000); // Check every 30 seconds
                 renderSingleEvent();
                 eventInterval = setInterval(renderSingleEvent, 2000);
                 renderSubjects();
