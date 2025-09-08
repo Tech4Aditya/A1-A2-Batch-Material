@@ -122,7 +122,7 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .login-modal-content, .password-modal-content, .announcement-modal-content {
+        .login-modal-content, .password-modal-content, .announcement-modal-content, .ai-modal-content {
             width: 90%;
             max-width: 500px;
             height: auto;
@@ -208,6 +208,13 @@
         .current-class-glow {
             animation: pulse-glow 1.5s infinite;
         }
+        .upcoming-class-glow {
+            animation: pulse-glow-upcoming 1.5s infinite;
+        }
+        @keyframes pulse-glow-upcoming {
+            0%, 100% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.8); }
+        }
         
         /* Hide scrollbar for a cleaner look */
         .scrollbar-hide::-webkit-scrollbar {
@@ -256,8 +263,6 @@
             }
         }
         
-        /* --- UPDATED: bell popup styles --- */
-
         /* Bell button / popup behavior updated: popup placed under bell (top-right) */
         /* Bell icon will shake forever via the rule below */
         @keyframes shake {
@@ -302,6 +307,15 @@
         @keyframes slideUp {
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(-10px); }
+        }
+        /* AI Assistant specific styling */
+        .ai-response-container {
+            min-height: 150px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+            max-height: 400px;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -377,6 +391,34 @@
         </div>
     </div>
 
+    <!-- AI Help Modal -->
+    <div id="ai-help-modal" class="modal">
+        <div class="modal-content ai-modal-content flex flex-col">
+            <button class="close-btn" id="close-ai-modal">&times;</button>
+            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">AI Sahayak</h2>
+            <p class="text-sm text-gray-400 mb-6 text-center">
+                Apna sawaal ya anurodh likhein. Udaharan: "Mujhe Web Programming par ek project report ka draft chahiye."
+            </p>
+            <textarea id="ai-input" class="w-full h-32 p-4 mb-4 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400 resize-none" placeholder="Apna prashna yahan likhein..."></textarea>
+            <div class="flex space-x-4 mb-4">
+                <button id="ai-generate-btn" class="portal-btn text-base p-2 w-full glow-container flex items-center justify-center">
+                    <span class="mr-2">✨</span>Jawaab Paayein
+                </button>
+                <button id="ai-clear-btn" class="portal-btn text-base p-2 w-full flex items-center justify-center">
+                    Saaf Karein
+                </button>
+            </div>
+            <div id="ai-response-container" class="bg-gray-900 rounded-lg p-4 border border-gray-700 text-sm text-gray-300 ai-response-container">
+                Jawaab yahan dikhayega...
+            </div>
+            <div class="loader-container" id="ai-loader">
+                <div class="loader"></div>
+                <div class="mt-4">Jawaab banaya jaa raha hai...</div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="portal-content" class="flex flex-col min-h-screen">
         <!-- Header with Clock and Timetable button -->
         <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex flex-col md:flex-row justify-between items-center flex-wrap gap-4">
@@ -421,6 +463,13 @@
                         <span class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17.5 22h-.5c-.2 0-.4-.1-.5-.3L12 14v-3c0-.4-.3-.7-.7-.9l4-1.6c.7-.3 1.3-.8 1.6-1.5c.3-.8.4-1.8.2-2.7a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5c-.2.9-.1 1.9.2 2.7c.3.7.9 1.2 1.6 1.5L24 11v3l-4.5 7.7c-.1.2-.3.3-.5.3z"/><path d="M6 14v-3c0-.4-.3-.7-.7-.9l-4-1.6C.6 7.2 0 6.7.2 6c.2-.9.4-1.9.2-2.7a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5c-.2.9-.1 1.9.2 2.7c.3.7.9 1.2 1.6 1.5L12 11v3l-4.5 7.7c-.1.2-.3.3-.5.3z"/><path d="M12 11h-.01"/></svg>
                             Mess Menu
+                        </span>
+                    </button>
+                    <!-- New button for AI Assistant -->
+                    <button id="ai-help-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
+                        <span class="flex items-center gap-2">
+                            <i class="fas fa-robot text-lg"></i>
+                            AI Sahayak ✨
                         </span>
                     </button>
                 </div>
@@ -612,6 +661,16 @@
         const popUp = document.getElementById('announcement-pop-up');
         const closeButton = document.getElementById('close-button');
 
+        // New AI Assistant elements
+        const aiHelpBtn = document.getElementById('ai-help-btn');
+        const aiHelpModal = document.getElementById('ai-help-modal');
+        const closeAiModalBtn = document.getElementById('close-ai-modal');
+        const aiInput = document.getElementById('ai-input');
+        const aiGenerateBtn = document.getElementById('ai-generate-btn');
+        const aiClearBtn = document.getElementById('ai-clear-btn');
+        const aiResponseContainer = document.getElementById('ai-response-container');
+        const aiLoader = document.getElementById('ai-loader');
+
 
         // State variables
         let currentEventIndex = 0;
@@ -629,25 +688,34 @@
         };
         setInterval(updateClock, 1000);
 
-        // Helper to parse time strings
+        // A more robust time parsing function to correctly handle AM/PM and 24-hour format
         const parseTime = (timeStr) => {
             const now = new Date();
-            let [start, end] = timeStr.replace('PM', '').split(' - ').map(t => {
-                const parts = t.trim().split(':');
-                let hour = parseInt(parts[0]);
-                const minutes = parseInt(parts[1]);
-                if (t.includes('PM') && hour !== 12) {
+            const parts = timeStr.split(' - ');
+            const [startStr, endStr] = parts;
+
+            const parseSingleTime = (t) => {
+                let [hourStr, minuteStr] = t.trim().split(':');
+                let hour = parseInt(hourStr);
+                const minutes = parseInt(minuteStr.replace(/\D/g, ''));
+                const isPM = t.toLowerCase().includes('pm');
+                
+                if (isPM && hour !== 12) {
                     hour += 12;
+                } else if (!isPM && hour === 12) {
+                    hour = 0; // Midnight case
                 }
-                if (t.includes('AM') && hour === 12) {
-                    hour = 0;
-                }
-                const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minutes);
-                return date;
-            });
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minutes, 0);
+            };
+
+            const start = parseSingleTime(startStr);
+            const end = parseSingleTime(endStr);
+            
+            // Handle times that cross midnight (e.g., 11 PM to 1 AM)
             if (end < start) {
                 end.setDate(end.getDate() + 1);
             }
+
             return { start, end };
         };
 
@@ -655,24 +723,22 @@
         const renderCurrentActivity = () => {
             const now = new Date();
             const currentDayOfWeek = now.toLocaleString('en-US', { weekday: 'long' });
-            const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
             const todayTimetable = timetableData.find(d => d.day === currentDayOfWeek);
             let currentActivity = null;
             let upcomingActivity = null;
-
+            
             if (todayTimetable) {
+                // Find the current class
                 currentActivity = todayTimetable.classes.find(cls => {
                     const { start, end } = parseTime(cls.time);
-                    const startTimeInMinutes = start.getHours() * 60 + start.getMinutes();
-                    const endTimeInMinutes = end.getHours() * 60 + end.getMinutes();
-                    return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes < endTimeInMinutes;
+                    return now >= start && now < end;
                 });
-
+                
+                // If no class is current, find the next upcoming one
                 if (!currentActivity) {
                     upcomingActivity = todayTimetable.classes.find(cls => {
                         const { start } = parseTime(cls.time);
-                        const startTimeInMinutes = start.getHours() * 60 + start.getMinutes();
-                        return startTimeInMinutes > currentTimeInMinutes;
+                        return now < start;
                     });
                 }
             }
@@ -809,20 +875,37 @@
                 return;
             }
 
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentTime = currentHour * 60 + currentMinute;
             const isCurrentDay = (selectedDay === currentDayOfWeek);
+            let upcomingClassIndex = -1;
 
-            const classCards = selectedDayData.classes.map(cls => {
+            if (isCurrentDay) {
+                for (let i = 0; i < selectedDayData.classes.length; i++) {
+                    const { start, end } = parseTime(selectedDayData.classes[i].time);
+                    if (now >= start && now < end) {
+                        // This is the current class, no need to check for upcoming
+                        upcomingClassIndex = -2; 
+                        break;
+                    }
+                    if (now < start && upcomingClassIndex === -1) {
+                        upcomingClassIndex = i;
+                    }
+                }
+            }
+
+            const classCards = selectedDayData.classes.map((cls, index) => {
                 const { start, end } = parseTime(cls.time);
-                const startTimeInMinutes = start.getHours() * 60 + start.getMinutes();
-                const endTimeInMinutes = end.getHours() * 60 + end.getMinutes();
-
-                const isCurrentClass = isCurrentDay && (currentTime >= startTimeInMinutes && currentTime < endTimeInMinutes);
+                const isCurrentClass = isCurrentDay && (now >= start && now < end);
+                const isUpcomingClass = isCurrentDay && (index === upcomingClassIndex);
                 
+                let glowClass = '';
+                if (isCurrentClass) {
+                    glowClass = 'current-class-glow';
+                } else if (isUpcomingClass) {
+                    glowClass = 'upcoming-class-glow';
+                }
+
                 return `
-                    <div class="bg-gray-900 rounded-lg p-3 text-sm md:text-base flex items-center justify-between border-l-4 border-${cls.color}-400 ${isCurrentClass ? 'current-class-glow' : ''}">
+                    <div class="bg-gray-900 rounded-lg p-3 text-sm md:text-base flex items-center justify-between border-l-4 border-${cls.color}-400 ${glowClass}">
                         <div>
                             <p class="font-medium text-white">${cls.subject} <span class="text-gray-400 font-normal">(${cls.type})</span></p>
                             <p class="text-xs text-gray-500">${cls.time}</p>
@@ -881,6 +964,13 @@
         // New: Event listener for Mess Menu button
         messBtn.addEventListener('click', () => {
             openPortalModal('https://mess-schedule.vercel.app/');
+        });
+
+        // New: Event listener for AI Help button
+        aiHelpBtn.addEventListener('click', () => {
+            aiHelpModal.classList.add('active');
+            aiResponseContainer.textContent = 'Jawaab yahan dikhayega...'; // Reset response area
+            aiInput.value = ''; // Clear input area
         });
 
         // New function to handle opening the iframe modal
@@ -978,7 +1068,7 @@
                     titleText = `Select a Tutorial for ${subjectName}`;
                     buttonTextPrefix = 'Tutorial Sheet';
                     break;
-            }
+                }
 
             materialModalTitle.textContent = titleText;
 
@@ -1001,9 +1091,12 @@
             loginMessageBox.textContent = '';
             loginMessageBox.classList.remove('error', 'success');
             loginMessageBox.classList.add('hidden');
-
-            // Hardcoded check for the single password "A2PORTAL"
-            if (password === 'A2PORTAL' && username !== '') {
+            
+            if (username === '') {
+                loginMessageBox.classList.remove('hidden');
+                loginMessageBox.classList.add('error', 'bg-red-500', 'text-white', 'p-2', 'rounded');
+                loginMessageBox.textContent = 'Please enter your full name.';
+            } else if (password === 'A2PORTAL') {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userName', username);
                 currentUsername = username;
@@ -1044,6 +1137,65 @@
         closeMaterialBtn.addEventListener('click', () => {
             materialModal.classList.remove('active');
         });
+
+        closeAiModalBtn.addEventListener('click', () => {
+            aiHelpModal.classList.remove('active');
+        });
+        
+        aiClearBtn.addEventListener('click', () => {
+            aiInput.value = '';
+            aiResponseContainer.textContent = 'Jawaab yahan dikhayega...';
+        });
+
+        // AI Generation Logic
+        aiGenerateBtn.addEventListener('click', async () => {
+            const userQuery = aiInput.value.trim();
+            if (userQuery === '') {
+                aiResponseContainer.textContent = 'Kripya apna prashna likhein.';
+                return;
+            }
+
+            aiLoader.style.display = 'flex';
+            aiResponseContainer.textContent = '';
+
+            const systemPrompt = "Aap ek sahayak student assistant hain, jo college ke vidyarthiyon ko unki padhai aur anya kaamon mein madad karne ke liye banaya gaya hai. Aapko unke prashnon ka jawaab Hindi (Latin) mein dena hai. Apne jawaab ko sahi dhang se format karein (HTML tags ka upyog na karein).";
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    aiResponseContainer.textContent = text;
+                } else {
+                    aiResponseContainer.textContent = 'Jawaab prapt karne mein koi dikkat hui. Kripya phir se koshish karein.';
+                }
+
+            } catch (error) {
+                console.error("API Error:", error);
+                aiResponseContainer.textContent = 'Maaf kijiye, ek error aayi. Kripya thodi der baad phir se koshish karein.';
+            } finally {
+                aiLoader.style.display = 'none';
+            }
+        });
         
         closePortalBtn.addEventListener('click', () => {
             portalModal.classList.remove('active');
@@ -1082,6 +1234,9 @@
             if (event.target === portalModal) {
                 portalModal.classList.remove('active');
                 portalIframe.src = "";
+            }
+            if (event.target === aiHelpModal) {
+                aiHelpModal.classList.remove('active');
             }
         });
 
