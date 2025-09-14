@@ -326,7 +326,7 @@
 
         /* Discussion Room specific styling */
         #chat-messages {
-            height: calc(100% - 150px);
+            height: 100%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -338,6 +338,7 @@
             max-width: 80%;
             display: flex;
             flex-direction: column;
+            line-height: 1.5;
         }
         .chat-message .sender-name {
             font-size: 0.75rem;
@@ -353,6 +354,33 @@
             background-color: #1d4ed8;
             align-self: flex-end;
             border-bottom-right-radius: 0.25rem;
+        }
+        .chat-message-bot {
+             background-color: #047857; /* Teal */
+             align-self: flex-start;
+             border-bottom-left-radius: 0.25rem;
+             border: 1px solid #06b6d4;
+        }
+        
+        #bot-selection-ui {
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #374151;
+            margin-bottom: 1rem;
+        }
+        .bot-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            border: 2px solid transparent;
+        }
+        .bot-avatar:hover {
+            transform: scale(1.1);
+        }
+        .bot-avatar.active {
+            border-color: #06b6d4;
+            box-shadow: 0 0 15px #06b6d4;
         }
         
         /* New Events Roadmap Styling */
@@ -749,9 +777,23 @@
     <div id="discussion-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-discussion-modal">&times;</span>
-            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Discussion Room</h2>
-            <div id="chat-messages" class="flex-grow p-4 bg-gray-900 rounded-lg border border-gray-700 mb-4 scrollbar-hide">
-                <!-- Chat messages will appear here -->
+            <h2 class="text-xl md:text-2xl font-bold mb-2 text-cyan-300 text-center">Discussion Room</h2>
+            <p id="chat-mode-indicator" class="text-center text-sm text-gray-400 mb-4">Group Chat</p>
+
+            <div id="bot-selection-ui">
+                <p class="text-center text-xs text-gray-500 mb-2">Or, have a private chat with an AI bot:</p>
+                <div class="flex justify-center items-center gap-4">
+                    <img src="https://avatar.iran.liara.run/public/girl?username=Ember" class="bot-avatar" data-bot="Ember" title="Ember (Emotional)">
+                    <img src="https://avatar.iran.liara.run/public/boy?username=Grump" class="bot-avatar" data-bot="Grump" title="Grump (Sarcastic)">
+                    <img src="https://avatar.iran.liara.run/public/girl?username=Willow" class="bot-avatar" data-bot="Willow" title="Willow (Sad)">
+                    <button id="return-to-group-chat" class="portal-btn text-xs py-1 px-3 hidden">Group Chat</button>
+                </div>
+            </div>
+
+            <div id="chat-messages-wrapper" class="flex-grow p-4 bg-gray-900 rounded-lg border border-gray-700 mb-4 scrollbar-hide overflow-y-auto">
+                 <div id="chat-messages" class="h-full">
+                    <!-- Chat messages will appear here -->
+                 </div>
             </div>
             <form id="chat-form" class="flex gap-4">
                 <input type="text" id="chat-input" placeholder="Type your message..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" autocomplete="off">
@@ -1066,6 +1108,10 @@
         const fabContainer = document.getElementById('fab-container');
         const fabTrigger = document.getElementById('fab-trigger');
         const fabTriggerIcon = fabTrigger.querySelector('i');
+        const chatModeIndicator = document.getElementById('chat-mode-indicator');
+        const botAvatars = document.querySelectorAll('.bot-avatar');
+        const returnToGroupChatBtn = document.getElementById('return-to-group-chat');
+
 
         // State variables
         let currentSubject = '';
@@ -1074,6 +1120,7 @@
         let currentActivityInterval;
         let unsubscribeChat; 
         let showPastEvents = false;
+        let activeBot = null;
         
         // --- Data Fetching from Firebase ---
         async function fetchSubjects() {
@@ -1394,14 +1441,7 @@
         });
         document.getElementById('fab-discussion').addEventListener('click', () => {
              discussionModal.classList.add('active');
-            const q = query(collection(db, "chatMessages"), orderBy("timestamp", "desc"), limit(20));
-            unsubscribeChat = onSnapshot(q, (querySnapshot) => {
-                const messages = [];
-                querySnapshot.forEach((doc) => {
-                    messages.push(doc.data());
-                });
-                renderChat(messages.reverse());
-            });
+             switchToGroupChat(); // Default to group chat
         });
 
         const openPortalModal = (url) => {
@@ -1534,6 +1574,7 @@
             aiResponseContainer.textContent = 'Jawaab yahan dikhayega...';
         });
 
+        // --- AI Sahayak Logic (Separate from Chat Bots) ---
         aiGenerateBtn.addEventListener('click', async () => {
              const userQuery = aiInput.value.trim();
             if (userQuery === '') {
@@ -1585,9 +1626,67 @@
             }
         });
 
-        // --- Real-time Discussion Room Logic ---
-        const renderChat = (messages) => {
+        // --- Real-time Discussion Room & AI Bot Logic ---
+        const botPersonalities = {
+            Ember: "You are an emotional and empathetic friend in a student chat room. Your name is 'Ember'. You respond with care, understanding, and use emojis to express feelings. Keep responses concise and friendly.",
+            Grump: "You are a grumpy and sarcastic bot in a student chat room. Your name is 'Grump'. You find everything annoying and complain a lot, but you are still helpful in a begrudging way. Your responses should be short, cynical, and slightly humorous.",
+            Willow: "You are a sad and melancholic bot in a student chat room. Your name is 'Willow'. You see the downside of everything and respond with a sense of gentle gloominess. You often sigh (using text like *sigh*) and use ellipses (...). Keep responses brief."
+        };
+
+        const getBotResponse = async (message, botName) => {
+            const systemPrompt = botPersonalities[botName];
+            if (!systemPrompt) return;
+
+            renderLocalMessage("...", false, botName); // "Bot is typing..."
+
+            const apiKey = ""; // Use the same API key as AI Sahayak
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: message }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond to that...";
+                
+                // Remove the "typing" indicator and show the real response
+                chatMessagesContainer.removeChild(chatMessagesContainer.lastChild);
+                renderLocalMessage(text, false, botName);
+            } catch (error) {
+                console.error("Bot API Error:", error);
+                 chatMessagesContainer.removeChild(chatMessagesContainer.lastChild);
+                renderLocalMessage("Sorry, I'm having trouble thinking right now.", false, botName);
+            }
+        };
+
+        const renderLocalMessage = (text, isUser, name) => {
+            const messageDiv = document.createElement('div');
+            let messageClass = '';
+            if (isUser) {
+                messageClass = 'chat-message-own';
+                name = 'You';
+            } else {
+                messageClass = 'chat-message-bot';
+            }
+            messageDiv.className = `chat-message ${messageClass}`;
+            messageDiv.innerHTML = `<p class="sender-name">${name}</p><p>${text}</p>`;
+            chatMessagesContainer.appendChild(messageDiv);
+            chatMessagesContainer.parentElement.scrollTop = chatMessagesContainer.parentElement.scrollHeight;
+        };
+
+        const renderGroupChat = (messages) => {
             chatMessagesContainer.innerHTML = '';
+            if (messages.length === 0) {
+                 chatMessagesContainer.innerHTML = `<div class="text-center text-gray-500 p-4">No messages yet. Be the first to say something!</div>`;
+                 return;
+            }
             const loggedInUser = localStorage.getItem('userName');
             messages.forEach(msg => {
                 const isOwnMessage = msg.name === loggedInUser;
@@ -1596,20 +1695,73 @@
                 messageDiv.innerHTML = `<p class="sender-name">${isOwnMessage ? 'You' : msg.name}</p><p>${msg.text}</p>`;
                 chatMessagesContainer.appendChild(messageDiv);
             });
-            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+            chatMessagesContainer.parentElement.scrollTop = chatMessagesContainer.parentElement.scrollHeight;
         };
+        
+        const switchToGroupChat = () => {
+            activeBot = null;
+            if (unsubscribeChat) unsubscribeChat(); // Stop any previous listeners
+            
+            chatModeIndicator.textContent = 'Group Chat';
+            returnToGroupChatBtn.classList.add('hidden');
+            botAvatars.forEach(a => a.classList.remove('active'));
+
+            const q = query(collection(db, "chatMessages"), orderBy("timestamp", "desc"), limit(20));
+            try {
+                unsubscribeChat = onSnapshot(q, (querySnapshot) => {
+                    if (activeBot) return; // Don't render group chat if a bot is active
+                    const messages = [];
+                    querySnapshot.forEach((doc) => messages.push(doc.data()));
+                    renderGroupChat(messages.reverse());
+                });
+            } catch (e) {
+                console.error("Firestore listener error:", e);
+                chatMessagesContainer.innerHTML = `<div class="text-center text-red-400 p-4">Error loading group chat.</div>`;
+            }
+        };
+
+        botAvatars.forEach(avatar => {
+            avatar.addEventListener('click', () => {
+                const botName = avatar.dataset.bot;
+                activeBot = botName;
+                if (unsubscribeChat) unsubscribeChat();
+
+                botAvatars.forEach(a => a.classList.remove('active'));
+                avatar.classList.add('active');
+
+                chatModeIndicator.textContent = `Chatting with ${botName}`;
+                returnToGroupChatBtn.classList.remove('hidden');
+                chatMessagesContainer.innerHTML = `<div class="text-center text-gray-500 p-4">Your private conversation with ${botName} begins now.</div>`;
+            });
+        });
+
+        returnToGroupChatBtn.addEventListener('click', switchToGroupChat);
+
 
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = chatInput.value.trim();
             const name = localStorage.getItem('userName');
-            if (text && name) {
-                chatInput.value = '';
-                await addDoc(collection(db, "chatMessages"), {
-                    name: name,
-                    text: text,
-                    timestamp: new Date()
-                });
+            if (!text || !name) return;
+
+            chatInput.value = '';
+
+            if (activeBot) {
+                // Handle bot chat
+                renderLocalMessage(text, true, name);
+                getBotResponse(text, activeBot);
+            } else {
+                // Handle group chat
+                try {
+                    await addDoc(collection(db, "chatMessages"), {
+                        name: name,
+                        text: text,
+                        timestamp: new Date()
+                    });
+                } catch (e) {
+                    console.error("Error sending message:", e);
+                    // Optionally show an error to the user
+                }
             }
         });
         
