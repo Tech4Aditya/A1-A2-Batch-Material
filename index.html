@@ -594,23 +594,24 @@
 
     <script type="module">
         // Import Firebase services
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, onSnapshot, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
 
         // --- Firebase Configuration ---
         // PASTE YOUR FIREBASE CONFIG OBJECT HERE
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBZwtYb6cif230DFeWYod5Kd_UDQ5cqz8I",
+    authDomain: "jiit-a2-portal.firebaseapp.com",
+    projectId: "jiit-a2-portal",
+    storageBucket: "jiit-a2-portal.firebasestorage.app",
+    messagingSenderId: "747985862248",
+    appId: "1:747985862248:web:db7d2f5eeea03f952085dd",
+    measurementId: "G-X339YN0MDV"
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+         const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 
         // Global variables for data from Firebase
         let subjects = [];
