@@ -594,24 +594,23 @@
 
     <script type="module">
         // Import Firebase services
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, getDocs, onSnapshot, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // --- Firebase Configuration ---
-        // PASTE YOUR FIREBASE CONFIG OBJECT HERE
         const firebaseConfig = {
             apiKey: "AIzaSyBZwtYb6cif230DFeWYod5Kd_UDQ5cqz8I",
-    authDomain: "jiit-a2-portal.firebaseapp.com",
-    projectId: "jiit-a2-portal",
-    storageBucket: "jiit-a2-portal.firebasestorage.app",
-    messagingSenderId: "747985862248",
-    appId: "1:747985862248:web:db7d2f5eeea03f952085dd",
-    measurementId: "G-X339YN0MDV"
+            authDomain: "jiit-a2-portal.firebaseapp.com",
+            projectId: "jiit-a2-portal",
+            storageBucket: "jiit-a2-portal.firebasestorage.app",
+            messagingSenderId: "747985862248",
+            appId: "1:747985862248:web:db7d2f5eeea03f952085dd",
+            measurementId: "G-X339YN0MDV"
         };
 
         // Initialize Firebase
-         const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         // Global variables for data from Firebase
         let subjects = [];
@@ -740,25 +739,42 @@
         
         // --- Data Fetching from Firebase ---
         async function fetchSubjects() {
-            const querySnapshot = await getDocs(collection(db, "subjects"));
-            subjects = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderSubjects();
+            try {
+                const querySnapshot = await getDocs(collection(db, "subjects"));
+                subjects = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderSubjects();
+            } catch (e) {
+                console.error("Error fetching subjects: ", e);
+                subjectsContainer.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not load subjects. Ensure Firestore is set up correctly.</p>`;
+            }
         }
 
         async function fetchEvents() {
-            const querySnapshot = await getDocs(collection(db, "events"));
-            events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            if (events.length > 0) {
-                 if(eventInterval) clearInterval(eventInterval);
-                renderSingleEvent();
-                eventInterval = setInterval(renderSingleEvent, 2000);
+            try {
+                const querySnapshot = await getDocs(collection(db, "events"));
+                events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if (events.length > 0) {
+                    if(eventInterval) clearInterval(eventInterval);
+                    renderSingleEvent();
+                    eventInterval = setInterval(renderSingleEvent, 2000);
+                } else {
+                     renderSingleEvent();
+                }
+            } catch(e) {
+                console.error("Error fetching events: ", e);
+                eventsContainer.innerHTML = `<div class="bg-gray-800 p-4 rounded-lg text-center text-red-400">Could not load events.</div>`;
             }
         }
 
         async function fetchAnnouncements() {
-            const querySnapshot = await getDocs(collection(db, "announcements"));
-            const announcements = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderAnnouncements(announcements);
+            try {
+                const querySnapshot = await getDocs(collection(db, "announcements"));
+                const announcements = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAnnouncements(announcements);
+            } catch(e) {
+                console.error("Error fetching announcements: ", e);
+                announcementsContainer.innerHTML = `<div class="p-4 bg-red-900 rounded-lg border border-red-700"><p class="text-red-300">Could not load announcements.</p></div>`;
+            }
         }
 
         // --- Rendering Functions ---
@@ -1104,7 +1120,54 @@
         });
 
         aiGenerateBtn.addEventListener('click', async () => {
-            // AI Generation logic remains the same
+             const userQuery = aiInput.value.trim();
+            if (userQuery === '') {
+                aiResponseContainer.textContent = 'Kripya apna prashna likhein.';
+                return;
+            }
+
+            aiLoader.style.display = 'flex';
+            aiResponseContainer.textContent = '';
+
+            const systemPrompt = "Aap ek sahayak student assistant hain, jo college ke vidyarthiyon ko unki padhai aur anya kaamon mein madad karne ke liye banaya gaya hai. Aapko unke prashnon ka jawaab Hindi (Latin) mein dena hai. Apne jawaab ko sahi dhang se format karein (HTML tags ka upyog na karein).";
+            
+            const apiKey = ""; // You can add your Gemini API key here if you have one.
+            
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    aiResponseContainer.textContent = text;
+                } else {
+                    aiResponseContainer.textContent = 'Jawaab prapt karne mein koi dikkat hui. Kripya phir se koshish karein.';
+                }
+
+            } catch (error) {
+                console.error("API Error:", error);
+                aiResponseContainer.textContent = 'Maaf kijiye, ek error aayi. Kripya thodi der baad phir se koshish karein.';
+            } finally {
+                aiLoader.style.display = 'none';
+            }
         });
 
         // --- Real-time Discussion Room Logic ---
