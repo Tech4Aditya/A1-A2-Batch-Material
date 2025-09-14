@@ -134,7 +134,7 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .login-modal-content, .password-modal-content, .announcement-modal-content, .ai-modal-content {
+        .login-modal-content, .password-modal-content, .announcement-modal-content, .planner-modal-content, .gpa-modal-content, .notepad-modal-content {
             width: 95%;
             max-width: 500px;
             height: auto;
@@ -314,15 +314,6 @@
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(-10px); }
         }
-        /* AI Assistant specific styling */
-        .ai-response-container {
-            min-height: 150px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 1.5;
-            max-height: 400px;
-            overflow-y: auto;
-        }
 
         /* Discussion Room specific styling */
         #chat-messages {
@@ -354,33 +345,6 @@
             background-color: #1d4ed8;
             align-self: flex-end;
             border-bottom-right-radius: 0.25rem;
-        }
-        .chat-message-bot {
-             background-color: #047857; /* Teal */
-             align-self: flex-start;
-             border-bottom-left-radius: 0.25rem;
-             border: 1px solid #06b6d4;
-        }
-        
-        #bot-selection-ui {
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #374151;
-            margin-bottom: 1rem;
-        }
-        .bot-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            border: 2px solid transparent;
-        }
-        .bot-avatar:hover {
-            transform: scale(1.1);
-        }
-        .bot-avatar.active {
-            border-color: #06b6d4;
-            box-shadow: 0 0 15px #06b6d4;
         }
         
         /* New Events Roadmap Styling */
@@ -453,86 +417,91 @@
             box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
         }
 
-        /* New Floating Action Button (FAB) styles */
-        #fab-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 90;
-        }
-        #fab-trigger {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #06b6d4;
+        /* New Countdown Styles */
+        #countdown-container {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .countdown-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .countdown-time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #38bdf8; /* Light Blue */
+            letter-spacing: 0.05em;
+        }
+        .countdown-label {
+            font-size: 0.75rem;
+            color: #94a3b8; /* Slate 400 */
+            text-transform: uppercase;
+        }
+        .countdown-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* New Planner Styles */
+        #task-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .task-item {
+            transition: all 0.3s ease;
+        }
+        .task-item.completed {
+            opacity: 0.5;
+        }
+        .task-item.completed p {
+            text-decoration: line-through;
+        }
+
+        /* GPA Calculator Styles */
+        #gpa-subject-rows {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* New Toolkit Styles */
+        .toolkit-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
             cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        #fab-trigger:hover {
-            transform: scale(1.1);
-        }
-        #fab-trigger.open {
-            transform: rotate(45deg);
-        }
-        .fab-options {
-            position: absolute;
-            bottom: 100%; /* Position above the trigger */
-            right: 0;
-            margin-bottom: 1rem;
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            align-items: center;
-        }
-        .fab-option {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #1f2937;
-            display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(20px);
-            position: relative;
+            gap: 0.5rem;
         }
-        #fab-container.open .fab-option {
-            opacity: 1;
-            transform: translateY(0);
+        .toolkit-card:hover {
+            transform: translateY(-5px);
+            background-color: #334155;
+            border-color: #06b6d4;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
         }
-        /* Staggered animation */
-        #fab-container.open .fab-option:nth-child(1) { transition-delay: 0.05s; }
-        #fab-container.open .fab-option:nth-child(2) { transition-delay: 0.1s; }
-        #fab-container.open .fab-option:nth-child(3) { transition-delay: 0.15s; }
-        #fab-container.open .fab-option:nth-child(4) { transition-delay: 0.2s; }
+        .toolkit-card i {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .toolkit-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
         
-        .fab-option .tooltip {
-            position: absolute;
-            right: 120%;
-            background-color: #1f2937;
-            color: #fff;
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            white-space: nowrap;
-            opacity: 0;
-            transform: translateX(10px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-        .fab-option:hover .tooltip {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-
         /* Media query for mobile timeline */
         @media screen and (max-width: 768px) {
             .timeline::after {
@@ -551,6 +520,9 @@
             }
             .timeline-content {
                 padding: 1rem;
+            }
+            .timeline-content h3 {
+                font-size: 1rem;
             }
         }
 
@@ -618,56 +590,7 @@
             <div id="login-message-box" class="message-box hidden mt-4 text-center"></div>
         </div>
     </div>
-
-    <!-- Password Change Modal (Kept for UI but not functional) -->
-    <div id="password-modal" class="modal">
-        <div class="modal-content password-modal-content flex flex-col items-center justify-center">
-            <span class="close-btn" id="close-password-modal">&times;</span>
-            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">Change Password</h2>
-            <p class="text-sm text-gray-400 mb-6 text-center">You are using a default password. It is recommended to change it for better security.</p>
-            <form id="password-change-form" class="space-y-4 w-full">
-                <div>
-                    <input type="password" id="new-password" placeholder="Enter New Password" class="w-full px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
-                </div>
-                <div>
-                    <input type="password" id="confirm-password" placeholder="Confirm Password" class="w-full px-4 py-2 my-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
-                </div>
-                <button type="submit" class="portal-btn text-base p-2 w-full glow-container mt-4">
-                    Change Password
-                </button>
-            </form>
-            <div id="password-message-box" class="message-box hidden mt-4 text-center"></div>
-        </div>
-    </div>
-
-    <!-- AI Help Modal -->
-    <div id="ai-help-modal" class="modal">
-        <div class="modal-content ai-modal-content flex flex-col">
-            <button class="close-btn" id="close-ai-modal">&times;</button>
-            <h2 class="text-2xl font-bold mb-4 text-cyan-300 text-center">AI Sahayak</h2>
-            <p class="text-sm text-gray-400 mb-6 text-center">
-                Apna sawaal ya anurodh likhein. Udaharan: "Mujhe Web Programming par ek project report ka draft chahiye."
-            </p>
-            <textarea id="ai-input" class="w-full h-32 p-4 mb-4 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400 resize-none" placeholder="Apna prashna yahan likhein..."></textarea>
-            <div class="flex space-x-4 mb-4">
-                <button id="ai-generate-btn" class="portal-btn text-base p-2 w-full glow-container flex items-center justify-center">
-                    <span class="mr-2">✨</span>Jawaab Paayein
-                </button>
-                <button id="ai-clear-btn" class="portal-btn text-base p-2 w-full flex items-center justify-center">
-                    Saaf Karein
-                </button>
-            </div>
-            <div id="ai-response-container" class="bg-gray-900 rounded-lg p-4 border border-gray-700 text-sm text-gray-300 ai-response-container">
-                Jawaab yahan dikhayega...
-            </div>
-            <div class="loader-container" id="ai-loader">
-                <div class="loader"></div>
-                <div class="mt-4">Jawaab banaya jaa raha hai...</div>
-            </div>
-        </div>
-    </div>
-
-
+    
     <div id="portal-content" class="flex flex-col min-h-screen">
         <!-- Header with Clock and Timetable button -->
         <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:p-6 transition-all duration-300 flex flex-col sm:flex-row justify-between items-center flex-wrap gap-4">
@@ -691,27 +614,36 @@
         <!-- Main Content -->
         <main id="main-content" class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12 transition-all duration-500 ease-out">
             
-            <!-- New Flex container for Activity and Events -->
-            <div class="flex flex-col md:flex-row gap-8 mb-10 md:mb-12">
-                <!-- Current Class/Break Section -->
-                <section class="md:w-1/2">
-                    <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Current Activity</h2>
-                    <div id="current-activity-container" class="space-y-4">
-                        <!-- Dynamic content inserted here -->
-                    </div>
+            <!-- Current Activity Section -->
+            <section class="mb-10 md:mb-12">
+                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Current Activity</h2>
+                <div id="current-activity-container" class="space-y-4"></div>
+            </section>
+
+            <!-- Countdown Timer Section -->
+            <section id="countdown-container" class="mb-10 md:mb-12"></section>
+
+            <!-- Upcoming Schedule and Toolkit Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10 md:mb-12">
+                <section>
+                    <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-6">Upcoming Schedule</h2>
+                    <div id="events-container" class="space-y-4"></div>
                 </section>
-                
-                <!-- Upcoming Events & Timetable Section -->
-                <section class="md:w-1/2">
-                    <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Schedule</h2>
-                    <div id="events-container" class="space-y-4">
-                        <!-- Next upcoming event will be dynamically inserted here -->
-                    </div>
+                <section>
+                     <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-6">Student Toolkit</h2>
+                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div id="planner-btn" class="toolkit-card"><i class="fas fa-tasks text-yellow-400"></i><h3>Planner</h3></div>
+                        <div id="notepad-btn" class="toolkit-card"><i class="fas fa-sticky-note text-indigo-400"></i><h3>Quick Note</h3></div>
+                        <div id="gpa-btn" class="toolkit-card"><i class="fas fa-calculator text-pink-400"></i><h3>GPA Calc</h3></div>
+                        <div id="attendance-btn" class="toolkit-card"><i class="fas fa-check-circle text-green-400"></i><h3>Attendance</h3></div>
+                        <div id="mess-btn" class="toolkit-card"><i class="fas fa-utensils text-orange-400"></i><h3>Mess Menu</h3></div>
+                        <div id="discussion-btn" class="toolkit-card"><i class="fas fa-comments text-purple-400"></i><h3>Discussion</h3></div>
+                     </div>
                 </section>
             </div>
 
             <!-- Subjects Section (Dynamic) -->
-            <section id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <section id="subjects-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                 <!-- Subject cards will be dynamically inserted here by JavaScript -->
             </section>
 
@@ -723,48 +655,39 @@
         </footer>
     </div>
 
-    <!-- Timetable Modal -->
+    <!-- ALL MODALS BELOW -->
     <div id="timetable-modal" class="modal">
         <div class="modal-content md:p-8 p-4">
-            <span class="close-btn" id="close-modal-btn">&times;</span>
+            <span class="close-btn">&times;</span>
             <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Class Timetable</h2>
-            <div id="timetable-content" class="overflow-y-auto w-full h-full">
-                <!-- Timetable will be dynamically inserted here -->
-            </div>
+            <div id="timetable-content" class="overflow-y-auto w-full h-full"></div>
         </div>
     </div>
 
-    <!-- New Events Roadmap Modal -->
     <div id="roadmap-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="close-roadmap-modal">&times;</span>
+            <span class="close-btn">&times;</span>
             <div class="flex justify-between items-center mb-4 px-2 sm:px-6 pt-2">
                 <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-cyan-300">Academic Roadmap</h2>
                 <button id="toggle-past-events" class="portal-btn text-xs sm:text-sm py-2 px-4">Show Past Events</button>
             </div>
             <div id="roadmap-container" class="scrollbar-hide">
-                 <div class="timeline">
-                    <!-- Roadmap items will be dynamically inserted here -->
-                 </div>
+                 <div class="timeline"></div>
             </div>
         </div>
     </div>
 
-    <!-- Material Selection Modal -->
     <div id="material-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="close-material-modal-btn">&times;</span>
+            <span class="close-btn">&times;</span>
             <h2 id="material-modal-title" class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Select Material</h2>
-            <div id="material-buttons-container" class="material-buttons-container">
-                <!-- Material buttons will be dynamically inserted here -->
-            </div>
+            <div id="material-buttons-container" class="material-buttons-container"></div>
         </div>
     </div>
 
-    <!-- Iframe Portal Modal -->
     <div id="portal-modal" class="modal">
         <div class="modal-content full-screen-modal-content">
-            <span class="close-btn" id="close-portal-btn">&times;</span>
+            <span class="close-btn">&times;</span>
             <div class="loader-container" id="portal-loader">
                 <div class="loader"></div>
                 <div class="mt-4">Loading...</div>
@@ -773,27 +696,12 @@
         </div>
     </div>
 
-    <!-- Discussion Room Modal -->
     <div id="discussion-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="close-discussion-modal">&times;</span>
-            <h2 class="text-xl md:text-2xl font-bold mb-2 text-cyan-300 text-center">Discussion Room</h2>
-            <p id="chat-mode-indicator" class="text-center text-sm text-gray-400 mb-4">Group Chat</p>
-
-            <div id="bot-selection-ui">
-                <p class="text-center text-xs text-gray-500 mb-2">Or, have a private chat with an AI bot:</p>
-                <div class="flex justify-center items-center gap-4">
-                    <img src="https://avatar.iran.liara.run/public/girl?username=Ember" class="bot-avatar" data-bot="Ember" title="Ember (Emotional)">
-                    <img src="https://avatar.iran.liara.run/public/boy?username=Grump" class="bot-avatar" data-bot="Grump" title="Grump (Sarcastic)">
-                    <img src="https://avatar.iran.liara.run/public/girl?username=Willow" class="bot-avatar" data-bot="Willow" title="Willow (Sad)">
-                    <button id="return-to-group-chat" class="portal-btn text-xs py-1 px-3 hidden">Group Chat</button>
-                </div>
-            </div>
-
+            <span class="close-btn">&times;</span>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Group Chat</h2>
             <div id="chat-messages-wrapper" class="flex-grow p-4 bg-gray-900 rounded-lg border border-gray-700 mb-4 scrollbar-hide overflow-y-auto">
-                 <div id="chat-messages" class="h-full">
-                    <!-- Chat messages will appear here -->
-                 </div>
+                 <div id="chat-messages" class="h-full"></div>
             </div>
             <form id="chat-form" class="flex gap-4">
                 <input type="text" id="chat-input" placeholder="Type your message..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" autocomplete="off">
@@ -801,36 +709,57 @@
             </form>
         </div>
     </div>
-
-    <!-- New Floating Action Button (FAB) for Student Services -->
-    <div id="fab-container">
-        <div class="fab-options">
-            <div id="fab-attendance" class="fab-option">
-                <i class="fas fa-check-circle text-xl text-green-400"></i>
-                <span class="tooltip">Attendance</span>
-            </div>
-            <div id="fab-mess" class="fab-option">
-                <i class="fas fa-utensils text-xl text-orange-400"></i>
-                <span class="tooltip">Mess Menu</span>
-            </div>
-            <div id="fab-ai" class="fab-option">
-                <i class="fas fa-robot text-xl text-cyan-400"></i>
-                <span class="tooltip">AI Sahayak</span>
-            </div>
-            <div id="fab-discussion" class="fab-option">
-                <i class="fas fa-comments text-xl text-purple-400"></i>
-                <span class="tooltip">Discussion</span>
-            </div>
+    
+    <!-- New Planner Modal -->
+    <div id="planner-modal" class="modal">
+        <div class="modal-content planner-modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Study Planner</h2>
+            <form id="task-form" class="flex gap-2 mb-4">
+                <input type="text" id="task-input" placeholder="Enter a new task..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" required>
+                <button type="submit" class="portal-btn !px-6">Add</button>
+            </form>
+            <div id="task-list" class="space-y-3 p-2"></div>
         </div>
-        <div id="fab-trigger">
-            <i class="fas fa-plus text-2xl text-white transition-transform duration-300"></i>
+    </div>
+    
+    <!-- New GPA Calculator Modal -->
+    <div id="gpa-modal" class="modal">
+        <div class="modal-content gpa-modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">GPA Calculator</h2>
+             <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="current-cgpa" class="block text-sm font-medium text-gray-400">Current CGPA</label>
+                    <input type="number" step="0.01" id="current-cgpa" class="w-full mt-1 px-3 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700">
+                </div>
+                 <div>
+                    <label for="credits-done" class="block text-sm font-medium text-gray-400">Credits Completed</label>
+                    <input type="number" id="credits-done" class="w-full mt-1 px-3 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700">
+                </div>
+            </div>
+            <h3 class="font-semibold text-center mb-2">Current Semester Subjects</h3>
+            <div id="gpa-subject-rows" class="space-y-2 mb-4 p-2"></div>
+            <button id="add-subject-row" class="portal-btn text-sm w-full mb-4">Add Subject</button>
+            <div id="gpa-results" class="text-center bg-gray-900 p-4 rounded-lg"></div>
         </div>
     </div>
 
+    <!-- New Notepad Modal -->
+    <div id="notepad-modal" class="modal">
+        <div class="modal-content notepad-modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Quick Note Pad</h2>
+            <p class="text-xs text-center text-gray-500 mb-2">Your note is saved automatically.</p>
+            <textarea id="notepad-input" class="w-full h-64 p-4 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400 resize-none" placeholder="Jot down your thoughts..."></textarea>
+            <div id="notepad-status" class="text-center text-xs text-green-400 mt-2 h-4"></div>
+        </div>
+    </div>
+    
     <script type="module">
         // Import Firebase services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, getDocs, onSnapshot, addDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, onSnapshot, addDoc, query, orderBy, limit, doc, setDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // --- Firebase Configuration ---
         const firebaseConfig = {
@@ -870,15 +799,15 @@
             { title: 'Janmashtami', fullDate: 'August 16 2025', displayDate: 'August 16', category: 'Holiday' },
             { title: 'Ebullience/Welcome function of 1st year students', fullDate: 'August 23 2025', displayDate: 'August 23', category: 'Event' },
             { title: 'Attendance Review before T1 exam', fullDate: 'August 27 2025', displayDate: 'August 27', category: 'Deadline' },
-            { title: 'T1 Examination & Results', fullDate: 'August 29 2025', displayDate: 'Aug 29 → Sep 6', category: 'Exam' },
+            { title: 'T1 Examination', fullDate: 'August 29 2025', displayDate: 'Aug 29 → Sep 6', category: 'Exam' },
             { title: 'Showing of Evaluated Answer Sheets to students (Latest by)', fullDate: 'September 12 2025', displayDate: 'September 12', category: 'Deadline' },
-            { title: 'Results Uploading on System (Latest by)', fullDate: 'September 15 2025', displayDate: 'September 15', category: 'Deadline' },
+            { title: 'T1 Results (Latest by)', fullDate: 'September 15 2025', displayDate: 'September 15', category: 'Result' },
             { title: 'Summer Training Viva - Locking of Marks', fullDate: 'September 16 2025', displayDate: 'September 16', category: 'Viva' },
             { title: 'Gandhi Jayanti / Dussehra', fullDate: 'October 2 2025', displayDate: 'October 2', category: 'Holiday' },
             { title: 'Allocation of Topics for Seminar/Term Paper for M.Tech 3rd Sem', fullDate: 'October 8 2025', displayDate: 'October 8', category: 'Deadline' },
             { title: 'Attendance Review before T2 exam', fullDate: 'October 8 2025', displayDate: 'October 8', category: 'Deadline' },
             { title: 'Lab/Projects - Mid Term Seminars / Vivas - Results to be uploaded by', fullDate: 'October 10 2025', displayDate: 'October 10', category: 'Deadline' },
-            { title: 'Mid Term/ T2 Examination & Results', fullDate: 'October 10 2025', displayDate: 'Oct 10 → Oct 18', category: 'Exam' },
+            { title: 'Mid Term (T2) Examination', fullDate: 'October 10 2025', displayDate: 'Oct 10 → Oct 18', category: 'Exam' },
             { title: 'Semester Break - Diwali (Odd)', fullDate: 'October 19 2025', displayDate: 'Oct 19 → Oct 26', category: 'Holiday' },
             { title: 'Student Vacation (Mid-semester break (Diwali))', fullDate: 'October 19 2025', displayDate: 'Oct 19 → Oct 26', category: 'Holiday' },
             { title: 'Final List of Electives to be sent to Registrar\'s Office', fullDate: 'October 20 2025', displayDate: 'October 20', category: 'Deadline' },
@@ -888,7 +817,7 @@
             { title: 'Govardhan Puja', fullDate: 'October 22 2025', displayDate: 'October 22', category: 'Holiday' },
             { title: 'Finalized curriculum to be entered in ERP system', fullDate: 'October 23 2025', displayDate: 'Oct 23 → Oct 28', category: 'Deadline' },
             { title: 'Showing of Evaluated Answer Sheets to students (Latest by)', fullDate: 'October 31 2025', displayDate: 'October 31', category: 'Deadline' },
-            { title: 'Results Uploading on System (Latest by)', fullDate: 'November 3 2025', displayDate: 'November 3', category: 'Deadline' },
+            { title: 'T2 Results (Latest by)', fullDate: 'November 3 2025', displayDate: 'November 3', category: 'Result' },
             { title: 'Orientation program for electives', fullDate: 'November 5 2025', displayDate: 'Nov 5 → Nov 7', category: 'Event' },
             { title: 'Guru Nanak Jayanti', fullDate: 'November 5 2025', displayDate: 'November 5', category: 'Holiday' },
             { title: 'Pre-Registration by students through webportal', fullDate: 'November 8 2025', displayDate: 'Nov 8 → Nov 11', category: 'Deadline' },
@@ -911,7 +840,7 @@
             { title: 'Provisional Grades Display', fullDate: 'December 19 2025', displayDate: 'December 19', category: 'Event' },
             { title: 'JIIT Alumni Meet', fullDate: 'December 20 2025', displayDate: 'December 20', category: 'Event' },
             { title: 'Freezing the grades/Submission of Final Grades', fullDate: 'December 20 2025', displayDate: 'December 20', category: 'Deadline' },
-            { title: 'Publish of Results by Registrar', fullDate: 'December 22 2025', displayDate: 'December 22', category: 'Event' },
+            { title: 'End Sem Results', fullDate: 'December 22 2025', displayDate: 'December 22', category: 'Result' },
             { title: 'Supplementary Examination - Registration', fullDate: 'December 22 2025', displayDate: 'Dec 22 → Dec 24', category: 'Deadline' },
             { title: 'Christmas', fullDate: 'December 25 2025', displayDate: 'December 25', category: 'Holiday' },
             { title: 'Faculty Vacation (Winter)', fullDate: 'December 25 2025', displayDate: 'Dec 25 → Jan 1', category: 'Holiday' },
@@ -1066,17 +995,13 @@
         const roadmapModal = document.getElementById('roadmap-modal');
         const materialModal = document.getElementById('material-modal');
         const loginModal = document.getElementById('login-modal');
-        const closeTimetableBtn = document.getElementById('close-modal-btn');
-        const closeRoadmapBtn = document.getElementById('close-roadmap-modal');
         const togglePastEventsBtn = document.getElementById('toggle-past-events');
-        const closeMaterialBtn = document.getElementById('close-material-modal-btn');
         const timetableContent = document.getElementById('timetable-content');
         const materialButtonsContainer = document.getElementById('material-buttons-container');
         const materialModalTitle = document.getElementById('material-modal-title');
         
         const portalModal = document.getElementById('portal-modal');
         const portalIframe = document.getElementById('portal-iframe');
-        const closePortalBtn = document.getElementById('close-portal-btn');
         const portalLoader = document.getElementById('portal-loader');
         const currentActivityContainer = document.getElementById('current-activity-container');
         const announcementsContainer = document.getElementById('announcements-container');
@@ -1090,27 +1015,26 @@
         const popUp = document.getElementById('announcement-pop-up');
         const closeButton = document.getElementById('close-button');
 
-        const aiHelpModal = document.getElementById('ai-help-modal');
-        const closeAiModalBtn = document.getElementById('close-ai-modal');
-        const aiInput = document.getElementById('ai-input');
-        const aiGenerateBtn = document.getElementById('ai-generate-btn');
-        const aiClearBtn = document.getElementById('ai-clear-btn');
-        const aiResponseContainer = document.getElementById('ai-response-container');
-        const aiLoader = document.getElementById('ai-loader');
-
         const logoutBtn = document.getElementById('logout-btn');
 
         const discussionModal = document.getElementById('discussion-modal');
-        const closeDiscussionModalBtn = document.getElementById('close-discussion-modal');
         const chatMessagesContainer = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
-        const fabContainer = document.getElementById('fab-container');
-        const fabTrigger = document.getElementById('fab-trigger');
-        const fabTriggerIcon = fabTrigger.querySelector('i');
-        const chatModeIndicator = document.getElementById('chat-mode-indicator');
-        const botAvatars = document.querySelectorAll('.bot-avatar');
-        const returnToGroupChatBtn = document.getElementById('return-to-group-chat');
+        
+        // New Element References
+        const countdownContainer = document.getElementById('countdown-container');
+        const plannerModal = document.getElementById('planner-modal');
+        const gpaModal = document.getElementById('gpa-modal');
+        const notepadModal = document.getElementById('notepad-modal');
+        const taskForm = document.getElementById('task-form');
+        const taskInput = document.getElementById('task-input');
+        const taskList = document.getElementById('task-list');
+        const gpaSubjectRows = document.getElementById('gpa-subject-rows');
+        const addSubjectRowBtn = document.getElementById('add-subject-row');
+        const gpaResults = document.getElementById('gpa-results');
+        const notepadInput = document.getElementById('notepad-input');
+        const notepadStatus = document.getElementById('notepad-status');
 
 
         // State variables
@@ -1119,9 +1043,80 @@
         let timetableInterval;
         let currentActivityInterval;
         let unsubscribeChat; 
+        let unsubscribePlanner;
         let showPastEvents = false;
-        let activeBot = null;
-        
+        let countdownInterval;
+        let notepadSaveTimeout;
+
+        // --- All Rendering Functions ---
+
+        const renderCountdownTimers = () => {
+            const now = new Date();
+            const importantEventTitles = [
+                'T1 Examination', 
+                'Mid Term (T2) Examination', 
+                'End Semester Examination',
+                'T1 Results (Latest by)', 
+                'T2 Results (Latest by)', 
+                'End Sem Results'
+            ];
+
+            const upcomingEvents = academicCalendar
+                .filter(e => importantEventTitles.includes(e.title) && new Date(e.fullDate) > now)
+                
+            countdownContainer.innerHTML = '';
+            if (upcomingEvents.length === 0) {
+                countdownContainer.innerHTML = '<p class="text-center text-gray-400 w-full">No major exams or results on the horizon. Enjoy the peace!</p>';
+                return;
+            }
+
+            upcomingEvents.slice(0, 3).forEach(event => {
+                const targetDate = new Date(event.fullDate);
+                const totalSeconds = (targetDate - now) / 1000;
+                
+                if (totalSeconds < 0) return;
+
+                const days = Math.floor(totalSeconds / 3600 / 24);
+                const hours = Math.floor(totalSeconds / 3600) % 24;
+                const minutes = Math.floor(totalSeconds / 60) % 60;
+                const seconds = Math.floor(totalSeconds) % 60;
+
+                const countdownEl = document.createElement('div');
+                countdownEl.className = 'countdown-item flex-grow';
+                countdownEl.innerHTML = `
+                    <p class="countdown-title">${event.title}</p>
+                    <div class="flex justify-center gap-4">
+                        <div><div class="countdown-time">${String(days).padStart(2, '0')}</div><div class="countdown-label">Days</div></div>
+                        <div><div class="countdown-time">${String(hours).padStart(2, '0')}</div><div class="countdown-label">Hrs</div></div>
+                        <div><div class="countdown-time">${String(minutes).padStart(2, '0')}</div><div class="countdown-label">Min</div></div>
+                        <div><div class="countdown-time">${String(seconds).padStart(2, '0')}</div><div class="countdown-label">Sec</div></div>
+                    </div>
+                `;
+                countdownContainer.appendChild(countdownEl);
+            });
+        };
+
+        const renderTasks = (tasks) => {
+            taskList.innerHTML = '';
+            if(tasks.length === 0){
+                taskList.innerHTML = `<p class="text-center text-gray-500 p-4">No tasks yet. Add one to get started!</p>`;
+                return;
+            }
+            tasks.sort((a, b) => a.createdAt - b.createdAt).forEach(task => {
+                const taskEl = document.createElement('div');
+                taskEl.className = `task-item flex items-center justify-between p-3 bg-gray-900 rounded-lg ${task.completed ? 'completed' : ''}`;
+                taskEl.dataset.id = task.id;
+                taskEl.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" class="task-checkbox h-5 w-5 rounded bg-gray-700 border-gray-600 text-cyan-500 focus:ring-cyan-600" ${task.completed ? 'checked' : ''}>
+                        <p class="text-gray-300">${task.text}</p>
+                    </div>
+                    <button class="delete-task text-gray-500 hover:text-red-500">&times;</button>
+                `;
+                taskList.appendChild(taskEl);
+            });
+        };
+
         // --- Data Fetching from Firebase ---
         async function fetchSubjects() {
             try {
@@ -1147,7 +1142,7 @@
             }
         }
 
-        // --- Rendering Functions ---
+        // --- Core Rendering Functions ---
         const updateClock = () => {
             const now = new Date();
             const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
@@ -1256,6 +1251,7 @@
                     case 'Holiday': return 'fas fa-glass-cheers text-green-400';
                     case 'Deadline': return 'fas fa-hourglass-half text-yellow-400';
                     case 'Viva': return 'fas fa-microphone-alt text-purple-400';
+                    case 'Result': return 'fas fa-trophy text-amber-400';
                     default: return 'fas fa-calendar-check text-blue-400';
                 }
             };
@@ -1418,32 +1414,31 @@
                 }
             }, 60000);
         };
+        
+        // --- Core Application Logic ---
 
+        const showPortalContent = () => {
+            portalContent.style.display = 'flex';
+            updateWelcomeMessage(localStorage.getItem('userName'));
+            
+            updateClock();
+            renderCurrentActivity();
+            renderUpcomingEventHighlight();
+            renderCountdownTimers();
+            currentActivityInterval = setInterval(renderCurrentActivity, 30000);
+            countdownInterval = setInterval(renderCountdownTimers, 1000);
+            
+            // Fetch dynamic content
+            fetchSubjects();
+            fetchAnnouncements();
+        };
+        
         // --- Event Listeners ---
         showTimetableBtn.addEventListener('click', () => {
             const currentDayOfWeek = new Date().toLocaleString('en-US', { weekday: 'long' });
             renderTimetable(currentDayOfWeek);
             timetableModal.classList.add('active');
             startTimetableUpdates();
-        });
-
-        // Add new FAB listeners
-        fabTrigger.addEventListener('click', () => {
-            fabContainer.classList.toggle('open');
-            fabTriggerIcon.classList.toggle('fa-plus');
-            fabTriggerIcon.classList.toggle('fa-times');
-        });
-
-        document.getElementById('fab-attendance').addEventListener('click', () => openPortalModal('https://jportal2-0.vercel.app/#/attendance'));
-        document.getElementById('fab-mess').addEventListener('click', () => openPortalModal('https://mess-schedule.vercel.app/'));
-        document.getElementById('fab-ai').addEventListener('click', () => {
-            aiHelpModal.classList.add('active');
-            aiResponseContainer.textContent = 'Jawaab yahan dikhayega...';
-            aiInput.value = '';
-        });
-        document.getElementById('fab-discussion').addEventListener('click', () => {
-             discussionModal.classList.add('active');
-             switchToGroupChat(); // Default to group chat
         });
 
         const openPortalModal = (url) => {
@@ -1545,145 +1540,44 @@
             location.reload();
         });
 
-        const showPortalContent = () => {
-            portalContent.style.display = 'flex';
-            updateWelcomeMessage(localStorage.getItem('userName'));
-            
-            updateClock();
-            renderCurrentActivity();
-            renderUpcomingEventHighlight();
-            currentActivityInterval = setInterval(renderCurrentActivity, 30000);
-            
-            // Fetch dynamic content
-            fetchSubjects();
-            fetchAnnouncements();
-        };
-
-        // --- Modal Close Listeners ---
-        [closeTimetableBtn, closeRoadmapBtn, closeMaterialBtn, closeAiModalBtn, closeDiscussionModalBtn, closePortalBtn].forEach(btn => {
-            if(btn) { 
-                btn.addEventListener('click', () => {
-                    btn.closest('.modal').classList.remove('active');
-                     if (btn === closeTimetableBtn) clearInterval(timetableInterval);
-                     if (btn === closeDiscussionModalBtn && unsubscribeChat) unsubscribeChat();
-                     if (btn === closePortalBtn) portalIframe.src = "";
+        // --- Modal Close Logic ---
+        document.querySelectorAll('.modal').forEach(modal => {
+             modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('active');
                 });
             }
         });
 
-        aiClearBtn.addEventListener('click', () => {
-            aiInput.value = '';
-            aiResponseContainer.textContent = 'Jawaab yahan dikhayega...';
-        });
-
-        // --- AI Sahayak Logic (Separate from Chat Bots) ---
-        aiGenerateBtn.addEventListener('click', async () => {
-             const userQuery = aiInput.value.trim();
-            if (userQuery === '') {
-                aiResponseContainer.textContent = 'Kripya apna prashna likhein.';
-                return;
-            }
-
-            aiLoader.style.display = 'flex';
-            aiResponseContainer.textContent = '';
-
-            const systemPrompt = "Aap ek sahayak student assistant hain, jo college ke vidyarthiyon ko unki padhai aur anya kaamon mein madad karne ke liye banaya gaya hai. Aapko unke prashnon ka jawaab Hindi (Latin) mein dena hai. Apne jawaab ko sahi dhang se format karein (HTML tags ka upyog na karein).";
-            
-            const apiKey = "AIzaSyBZwtYb6cif230DFeWYod5Kd_UDQ5cqz8I"; 
-            
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: userQuery }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                if (text) {
-                    aiResponseContainer.textContent = text;
-                } else {
-                    aiResponseContainer.textContent = 'Jawaab prapt karne mein koi dikkat hui. Kripya phir se koshish karein. Check browser console for details.';
-                     console.error("AI Response Error:", result);
-                }
-
-            } catch (error) {
-                console.error("API Error:", error);
-                aiResponseContainer.textContent = `Maaf kijiye, ek error aayi. ${error.message}. Make sure the API key is correct and you have enabled the Vertex AI API in Google Cloud.`;
-            } finally {
-                aiLoader.style.display = 'none';
+        discussionModal.addEventListener('click', (e) => {
+            if (e.target === discussionModal || e.target.closest('.close-btn')) {
+                if (unsubscribeChat) unsubscribeChat();
             }
         });
-
-        // --- Real-time Discussion Room & AI Bot Logic ---
-        const botPersonalities = {
-            Ember: "You are an emotional and empathetic friend in a student chat room. Your name is 'Ember'. You respond with care, understanding, and use emojis to express feelings. Keep responses concise and friendly.",
-            Grump: "You are a grumpy and sarcastic bot in a student chat room. Your name is 'Grump'. You find everything annoying and complain a lot, but you are still helpful in a begrudging way. Your responses should be short, cynical, and slightly humorous.",
-            Willow: "You are a sad and melancholic bot in a student chat room. Your name is 'Willow'. You see the downside of everything and respond with a sense of gentle gloominess. You often sigh (using text like *sigh*) and use ellipses (...). Keep responses brief."
-        };
-
-        const getBotResponse = async (message, botName) => {
-            const systemPrompt = botPersonalities[botName];
-            if (!systemPrompt) return;
-
-            renderLocalMessage("...", false, botName); // "Bot is typing..."
-
-            const apiKey = "AIzaSyBZwtYb6cif230DFeWYod5Kd_UDQ5cqz8I"; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            const payload = {
-                contents: [{ parts: [{ text: message }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] }
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const result = await response.json();
-                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to respond to that...";
-                
-                // Remove the "typing" indicator and show the real response
-                chatMessagesContainer.removeChild(chatMessagesContainer.lastChild);
-                renderLocalMessage(text, false, botName);
-            } catch (error) {
-                console.error("Bot API Error:", error);
-                 chatMessagesContainer.removeChild(chatMessagesContainer.lastChild);
-                renderLocalMessage(`Sorry, I'm having trouble thinking right now. Error: ${error.message}`, false, botName);
+         plannerModal.addEventListener('click', (e) => {
+            if (e.target === plannerModal || e.target.closest('.close-btn')) {
+                if (unsubscribePlanner) unsubscribePlanner();
             }
-        };
+        });
+         timetableModal.addEventListener('click', (e) => {
+             if(e.target === timetableModal || e.target.closest('.close-btn')) {
+                if(timetableInterval) clearInterval(timetableInterval);
+             }
+         });
+         portalModal.addEventListener('click', (e) => {
+             if(e.target === portalModal || e.target.closest('.close-btn')) {
+                portalIframe.src = "";
+             }
+         });
 
-        const renderLocalMessage = (text, isUser, name) => {
-            const messageDiv = document.createElement('div');
-            let messageClass = '';
-            if (isUser) {
-                messageClass = 'chat-message-own';
-                name = 'You';
-            } else {
-                messageClass = 'chat-message-bot';
-            }
-            messageDiv.className = `chat-message ${messageClass}`;
-            messageDiv.innerHTML = `<p class="sender-name">${name}</p><p>${text}</p>`;
-            chatMessagesContainer.appendChild(messageDiv);
-            chatMessagesContainer.parentElement.scrollTop = chatMessagesContainer.parentElement.scrollHeight;
-        };
 
+        // --- Real-time Discussion Room Logic ---
         const renderGroupChat = (messages) => {
             chatMessagesContainer.innerHTML = '';
             if (messages.length === 0) {
@@ -1702,17 +1596,11 @@
         };
         
         const switchToGroupChat = () => {
-            activeBot = null;
-            if (unsubscribeChat) unsubscribeChat(); // Stop any previous listeners
+            if (unsubscribeChat) unsubscribeChat(); 
             
-            chatModeIndicator.textContent = 'Group Chat';
-            returnToGroupChatBtn.classList.add('hidden');
-            botAvatars.forEach(a => a.classList.remove('active'));
-
             const q = query(collection(db, "chatMessages"), orderBy("timestamp", "desc"), limit(20));
             try {
                 unsubscribeChat = onSnapshot(q, (querySnapshot) => {
-                    if (activeBot) return; // Don't render group chat if a bot is active
                     const messages = [];
                     querySnapshot.forEach((doc) => messages.push(doc.data()));
                     renderGroupChat(messages.reverse());
@@ -1723,48 +1611,20 @@
             }
         };
 
-        botAvatars.forEach(avatar => {
-            avatar.addEventListener('click', () => {
-                const botName = avatar.dataset.bot;
-                activeBot = botName;
-                if (unsubscribeChat) unsubscribeChat();
-
-                botAvatars.forEach(a => a.classList.remove('active'));
-                avatar.classList.add('active');
-
-                chatModeIndicator.textContent = `Chatting with ${botName}`;
-                returnToGroupChatBtn.classList.remove('hidden');
-                chatMessagesContainer.innerHTML = `<div class="text-center text-gray-500 p-4">Your private conversation with ${botName} begins now.</div>`;
-            });
-        });
-
-        returnToGroupChatBtn.addEventListener('click', switchToGroupChat);
-
-
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = chatInput.value.trim();
             const name = localStorage.getItem('userName');
             if (!text || !name) return;
-
             chatInput.value = '';
-
-            if (activeBot) {
-                // Handle bot chat
-                renderLocalMessage(text, true, name);
-                getBotResponse(text, activeBot);
-            } else {
-                // Handle group chat
-                try {
-                    await addDoc(collection(db, "chatMessages"), {
-                        name: name,
-                        text: text,
-                        timestamp: new Date()
-                    });
-                } catch (e) {
-                    console.error("Error sending message:", e);
-                    // Optionally show an error to the user
-                }
+            try {
+                await addDoc(collection(db, "chatMessages"), {
+                    name: name,
+                    text: text,
+                    timestamp: new Date()
+                });
+            } catch (e) {
+                console.error("Error sending message:", e);
             }
         });
         
@@ -1781,13 +1641,6 @@
         });
 
         window.addEventListener('click', (event) => {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-                if (event.target === timetableModal) clearInterval(timetableInterval);
-                if (event.target === discussionModal && unsubscribeChat) unsubscribeChat();
-                if (event.target === portalModal) portalIframe.src = "";
-            }
-
             const clickedInsidePopup = popUp.contains(event.target);
             const clickedBell = bellButton.contains(event.target);
             if (popUp.style.display === 'flex' && !clickedInsidePopup && !clickedBell) {
@@ -1796,6 +1649,155 @@
             }
         });
 
+        
+        // --- GPA Calculator Logic ---
+        const addGpaRow = () => {
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-[1fr,80px,100px,30px] gap-2 items-center';
+            row.innerHTML = `
+                <input type="text" placeholder="Subject Name" class="gpa-subject w-full px-2 py-1 rounded bg-gray-700 border-gray-600">
+                <input type="number" placeholder="Credits" class="gpa-credits w-full px-2 py-1 rounded bg-gray-700 border-gray-600">
+                <select class="gpa-grade w-full px-2 py-1 rounded bg-gray-700 border-gray-600">
+                    <option value="10">10</option><option value="9">9</option><option value="8">8</option><option value="7">7</option><option value="6">6</option><option value="5">5</option><option value="0">Fail</option>
+                </select>
+                <button class="remove-gpa-row text-gray-500 hover:text-red-500">&times;</button>
+            `;
+            gpaSubjectRows.appendChild(row);
+        };
+        
+        const calculateGpa = () => {
+             let totalCredits = 0;
+             let totalPoints = 0;
+             const rows = gpaSubjectRows.querySelectorAll('.grid');
+             rows.forEach(row => {
+                 const credits = parseFloat(row.querySelector('.gpa-credits').value) || 0;
+                 const grade = parseFloat(row.querySelector('.gpa-grade').value) || 0;
+                 if(credits > 0){
+                    totalCredits += credits;
+                    totalPoints += credits * grade;
+                 }
+             });
+
+             const sgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+             
+             const currentCgpa = parseFloat(document.getElementById('current-cgpa').value) || 0;
+             const creditsDone = parseFloat(document.getElementById('credits-done').value) || 0;
+             
+             let newCgpa = sgpa;
+             if(currentCgpa > 0 && creditsDone > 0) {
+                 const oldTotalPoints = currentCgpa * creditsDone;
+                 const newTotalCredits = creditsDone + totalCredits;
+                 newCgpa = newTotalCredits > 0 ? ((oldTotalPoints + totalPoints) / newTotalCredits).toFixed(2) : '0.00';
+             }
+             
+             gpaResults.innerHTML = `
+                <p>SGPA: <span class="font-bold text-2xl text-cyan-400">${sgpa}</span></p>
+                <p class="mt-2">New CGPA: <span class="font-bold text-2xl text-teal-400">${newCgpa}</span></p>
+             `;
+        };
+
+        addSubjectRowBtn.addEventListener('click', addGpaRow);
+        gpaSubjectRows.addEventListener('click', (e) => {
+            if(e.target.classList.contains('remove-gpa-row')) {
+                e.target.parentElement.remove();
+                calculateGpa();
+            }
+        });
+        gpaModal.addEventListener('input', calculateGpa);
+
+        // --- Notepad Logic ---
+        const saveNote = async () => {
+            const username = localStorage.getItem('userName');
+            if(!username) return;
+            const noteRef = doc(db, 'users', username, 'notepad', 'mainNote');
+            await setDoc(noteRef, { content: notepadInput.value });
+            notepadStatus.textContent = 'Saved!';
+            setTimeout(() => notepadStatus.textContent = '', 2000);
+        };
+        
+        notepadInput.addEventListener('keyup', () => {
+            clearTimeout(notepadSaveTimeout);
+            notepadStatus.textContent = 'Saving...';
+            notepadSaveTimeout = setTimeout(saveNote, 1000);
+        });
+
+         // --- Planner Logic ---
+        taskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = taskInput.value.trim();
+            const username = localStorage.getItem('userName');
+            if (!text || !username) return;
+            taskInput.value = '';
+
+            const userTasksRef = collection(db, 'users', username, 'tasks');
+            await addDoc(userTasksRef, {
+                text: text,
+                completed: false,
+                createdAt: new Date()
+            });
+        });
+        
+        taskList.addEventListener('click', async (e) => {
+             const username = localStorage.getItem('userName');
+             if(!username) return;
+             const taskItem = e.target.closest('.task-item');
+             if(!taskItem) return;
+             const docId = taskItem.dataset.id;
+             const taskDocRef = doc(db, 'users', username, 'tasks', docId);
+
+             if(e.target.classList.contains('task-checkbox')){
+                const isCompleted = e.target.checked;
+                await setDoc(taskDocRef, { completed: isCompleted }, { merge: true });
+             }
+             if(e.target.classList.contains('delete-task')){
+                 await deleteDoc(taskDocRef);
+             }
+        });
+
+        // --- Toolkit Buttons Opening Modals ---
+        document.getElementById('planner-btn').addEventListener('click', () => {
+            const username = localStorage.getItem('userName');
+            if(!username) return;
+            plannerModal.classList.add('active');
+            
+            if(unsubscribePlanner) unsubscribePlanner();
+            const userTasksRef = collection(db, 'users', username, 'tasks');
+            unsubscribePlanner = onSnapshot(userTasksRef, (snapshot) => {
+                const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTasks(tasks);
+            });
+        });
+
+        document.getElementById('gpa-btn').addEventListener('click', () => {
+            gpaModal.classList.add('active');
+            if(gpaSubjectRows.children.length === 0) {
+                 for(let i = 0; i < 5; i++) addGpaRow();
+            }
+            calculateGpa();
+        });
+
+        document.getElementById('notepad-btn').addEventListener('click', async () => {
+             const username = localStorage.getItem('userName');
+            if(!username) return;
+            notepadModal.classList.add('active');
+            const noteRef = doc(db, 'users', username, 'notepad', 'mainNote');
+            const docSnap = await getDoc(noteRef);
+            if (docSnap.exists()) {
+                notepadInput.value = docSnap.data().content;
+            } else {
+                 notepadInput.value = '';
+            }
+            notepadStatus.textContent = '';
+        });
+        
+        document.getElementById('attendance-btn').addEventListener('click', () => openPortalModal('https://jportal2-0.vercel.app/#/attendance'));
+        document.getElementById('mess-btn').addEventListener('click', () => openPortalModal('https://mess-schedule.vercel.app/'));
+        document.getElementById('discussion-btn').addEventListener('click', () => {
+             discussionModal.classList.add('active');
+             switchToGroupChat(); 
+        });
+
+        // --- Page Load Logic ---
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isLoggedIn') === 'true') {
                 loginModal.classList.remove('active');
