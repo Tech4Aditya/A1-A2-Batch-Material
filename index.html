@@ -45,15 +45,22 @@
             padding: 0.75rem 1.5rem;
             border-radius: 9999px;
             border: 1px solid #4b5563;
-            transition: all 0.3s ease-in-out;
+            transition: all 0.2s ease-in-out;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .semester-btn:hover, .chapter-btn:hover, .day-btn:hover, .portal-btn:hover {
             background-color: #2d3748;
             color: #ffffff;
             border-color: #06b6d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .semester-btn:active, .chapter-btn:active, .day-btn:active, .portal-btn:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .day-btn.active {
             background-color: #06b6d4;
@@ -120,13 +127,15 @@
             height: 90%;
             box-shadow: 0 0 40px rgba(6, 182, 212, 0.5);
             animation: modal-fade-in 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
         }
         @keyframes modal-fade-in {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
         .login-modal-content, .password-modal-content, .announcement-modal-content, .ai-modal-content {
-            width: 90%;
+            width: 95%;
             max-width: 500px;
             height: auto;
             padding: 2rem;
@@ -219,6 +228,15 @@
             50% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.8); }
         }
         
+        /* Flashing glow for the next upcoming event */
+        .upcoming-event-glow {
+             animation: flash-glow 1s infinite;
+        }
+        @keyframes flash-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.4); border-color: rgba(234, 179, 8, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(234, 179, 8, 0.8); border-color: rgba(234, 179, 8, 0.8); }
+        }
+        
         /* Hide scrollbar for a cleaner look */
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
@@ -253,21 +271,7 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .portal-links-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            justify-content: center;
-            align-items: center;
-        }
-        @media (min-width: 768px) {
-            .portal-links-container {
-                flex-direction: row;
-            }
-        }
         
-        /* Bell button / popup behavior updated: popup placed under bell (top-right) */
-        /* Bell icon will shake forever via the rule below */
         @keyframes shake {
             0% { transform: rotate(0deg); }
             20% { transform: rotate(-15deg); }
@@ -281,17 +285,16 @@
             transform-origin: top center;
         }
 
-        /* popup aligned under bell (instead of centered) */
         .pop-up {
             position: absolute;
-            top: 70px;    /* below the bell */
+            top: 70px;
             right: 20px;
             transform: none;
             z-index: 110;
             display: none;
         }
         #announcement-pop-up {
-            display: none; /* Hide by default */
+            display: none; 
         }
         .pop-up-content {
             width: 90%;
@@ -351,6 +354,175 @@
             align-self: flex-end;
             border-bottom-right-radius: 0.25rem;
         }
+        
+        /* New Events Roadmap Styling */
+        #roadmap-container {
+            position: relative;
+            width: 100%;
+            padding: 2rem 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: #4b5563;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 3px;
+        }
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+        .timeline-item.left {
+            left: 0;
+        }
+        .timeline-item.right {
+            left: 50%;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: #1f2937;
+            border: 4px solid #06b6d4;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .timeline-item.right::after {
+            left: -16px;
+        }
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: #1f2937;
+            position: relative;
+            border-radius: 8px;
+            border: 1px solid #4b5563;
+        }
+        .timeline-item.past-event .timeline-content {
+            opacity: 0.5;
+            border-left: 5px solid #6b7280; /* Gray for past */
+        }
+        .timeline-item.upcoming-event .timeline-content {
+            border-left: 5px solid #f59e0b; /* Amber for upcoming */
+        }
+        .timeline-item.today-event .timeline-content {
+            border-left: 5px solid #22c55e; /* Green for today */
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+
+        /* New Floating Action Button (FAB) styles */
+        #fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 90;
+        }
+        #fab-trigger {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #06b6d4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        #fab-trigger:hover {
+            transform: scale(1.1);
+        }
+        #fab-trigger.open {
+            transform: rotate(45deg);
+        }
+        .fab-options {
+            position: absolute;
+            bottom: 100%; /* Position above the trigger */
+            right: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        .fab-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            position: relative;
+        }
+        #fab-container.open .fab-option {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Staggered animation */
+        #fab-container.open .fab-option:nth-child(1) { transition-delay: 0.05s; }
+        #fab-container.open .fab-option:nth-child(2) { transition-delay: 0.1s; }
+        #fab-container.open .fab-option:nth-child(3) { transition-delay: 0.15s; }
+        #fab-container.open .fab-option:nth-child(4) { transition-delay: 0.2s; }
+        
+        .fab-option .tooltip {
+            position: absolute;
+            right: 120%;
+            background-color: #1f2937;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .fab-option:hover .tooltip {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+
+        /* Media query for mobile timeline */
+        @media screen and (max-width: 768px) {
+            .timeline::after {
+                left: 31px; /* Move the line to the left */
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px; /* Make space for line and icon */
+                padding-right: 25px;
+            }
+            .timeline-item.left, .timeline-item.right {
+                left: 0%; /* Stack all items */
+            }
+            .timeline-item.right::after, .timeline-item.left::after {
+                left: 15px; /* Position icon on the line */
+            }
+        }
+
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -448,86 +620,57 @@
 
     <div id="portal-content" class="flex flex-col min-h-screen">
         <!-- Header with Clock and Timetable button -->
-        <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:mx-10 md:mt-10 md:p-6 lg:mx-20 lg:mt-12 lg:p-8 transition-all duration-300 flex flex-col md:flex-row justify-between items-center flex-wrap gap-4">
-            <h1 class="text-2xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center md:text-left flex-grow">
+        <header class="bg-gray-900 header-glow rounded-b-3xl mx-4 mt-4 p-4 md:p-6 lg:p-8 transition-all duration-300 flex flex-col sm:flex-row justify-between items-center flex-wrap gap-4">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 text-center sm:text-left flex-grow">
                 JIIT A2 Study Portal
             </h1>
-            <div class="flex flex-col md:flex-row items-center gap-4">
+            <div class="flex items-center gap-4">
                  <button id="logout-btn" class="semester-btn text-base p-2 bg-red-800/50 border-red-500/50 hover:bg-red-700/50">
                     <i class="fas fa-sign-out-alt mr-2"></i>Logout
                 </button>
                 <button id="show-timetable-btn" class="semester-btn text-base p-2">
                     View Timetable
                 </button>
-                <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 mt-2 md:mt-0 glow-container"></div>
+                <div id="clock" class="text-xl md:text-2xl font-bold text-gray-300 glow-container"></div>
             </div>
         </header>
         
         <!-- Welcome and User Info Section -->
-        <section id="user-info-section" class="text-center py-8">
-            <h2 id="welcome-message" class="text-2xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-lime-500">Welcome, Student!</h2>
+        <section id="user-info-section" class="text-center py-6 md:py-8">
+            <h2 id="welcome-message" class="text-2xl md:text-3xl lg:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-lime-500">Welcome, Student!</h2>
         </section>
 
         <!-- Main Content -->
-        <main id="main-content" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 transition-all duration-500 ease-out">
+        <main id="main-content" class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-16 transition-all duration-500 ease-out">
             
-            <!-- Current Class/Break Section -->
-            <section class="mb-12">
-                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Current Activity</h2>
-                <div id="current-activity-container" class="space-y-4">
-                    <!-- Dynamic content inserted here -->
-                </div>
-            </section>
-            
-            <!-- Quick Links/Student Services Section -->
-            <section class="mb-12">
-                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-6">Student Services</h2>
-                <div class="portal-links-container">
-                    <button id="attendance-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
-                        <span class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-circle-2"><path d="M12 2a10 10 0 1 0 10 10a10 10 0 0 0-10-10Z"/><path d="M9 12l2 2l4-4"/></svg>
-                            Attendance Portal
-                        </span>
-                    </button>
-                    <button id="mess-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
-                        <span class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17.5 22h-.5c-.2 0-.4-.1-.5-.3L12 14v-3c0-.4-.3-.7-.7-.9l4-1.6c.7-.3 1.3-.8 1.6-1.5c.3-.8.4-1.8.2-2.7a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5c-.2.9-.1 1.9.2 2.7c.3.7.9 1.2 1.6 1.5L24 11v3l-4.5 7.7c-.1.2-.3.3-.5.3z"/><path d="M6 14v-3c0-.4-.3-.7-.7-.9l-4-1.6C.6 7.2 0 6.7.2 6c.2-.9.4-1.9.2-2.7a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5c-.2.9-.1 1.9.2 2.7c.3.7.9 1.2 1.6 1.5L12 11v3l-4.5 7.7c-.1.2-.3.3-.5.3z"/><path d="M12 11h-.01"/></svg>
-                            Mess Menu
-                        </span>
-                    </button>
-                    <!-- New button for AI Assistant -->
-                    <button id="ai-help-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
-                        <span class="flex items-center gap-2">
-                            <i class="fas fa-robot text-lg"></i>
-                            AI Sahayak ✨
-                        </span>
-                    </button>
-                    <button id="discussion-btn" class="portal-btn px-6 py-3 rounded-full text-lg glow-container">
-                        <span class="flex items-center gap-2">
-                            <i class="fas fa-comments text-lg"></i>
-                            Discussion Room
-                        </span>
-                    </button>
-                </div>
-            </section>
-            
-            <!-- Upcoming Events & Timetable Section -->
-            <section class="mb-12">
-                <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Events & Schedule</h2>
-                <div id="events-container" class="space-y-4">
-                    <!-- Single event will be dynamically inserted here -->
-                </div>
-            </section>
+            <!-- New Flex container for Activity and Events -->
+            <div class="flex flex-col md:flex-row gap-10 md:gap-8 mb-10 md:mb-12">
+                <!-- Current Class/Break Section -->
+                <section class="md:w-1/2">
+                    <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Current Activity</h2>
+                    <div id="current-activity-container" class="space-y-4">
+                        <!-- Dynamic content inserted here -->
+                    </div>
+                </section>
+                
+                <!-- Upcoming Events & Timetable Section -->
+                <section class="md:w-1/2">
+                    <h2 class="text-xl md:text-2xl font-bold text-cyan-300 text-center mb-4">Upcoming Schedule</h2>
+                    <div id="events-container" class="space-y-4">
+                        <!-- Next upcoming event will be dynamically inserted here -->
+                    </div>
+                </section>
+            </div>
 
             <!-- Subjects Section (Dynamic) -->
-            <section id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <section id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                 <!-- Subject cards will be dynamically inserted here by JavaScript -->
             </section>
 
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gray-900 shadow-2xl rounded-t-3xl mx-4 my-4 p-4 md:mx-10 md:my-10 md:p-6 lg:mx-20 lg:my-12 lg:p-8 text-center text-gray-500 text-sm transition-all duration-300">
+        <footer class="bg-gray-900 shadow-2xl rounded-t-3xl mx-4 my-4 p-4 md:p-6 lg:p-8 text-center text-gray-500 text-sm transition-all duration-300">
             <p>Made with ❤️ by Aditya Pandey</p>
         </footer>
     </div>
@@ -543,13 +686,18 @@
         </div>
     </div>
 
-    <!-- Upcoming Events Modal -->
-    <div id="events-modal" class="modal">
+    <!-- New Events Roadmap Modal -->
+    <div id="roadmap-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="close-events-modal-btn">&times;</span>
-            <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Upcoming Events</h2>
-            <div id="all-events-container" class="space-y-4 overflow-y-auto">
-                <!-- All events will be dynamically inserted here -->
+            <span class="close-btn" id="close-roadmap-modal">&times;</span>
+            <div class="flex justify-between items-center mb-4 px-6 pt-2">
+                <h2 class="text-xl md:text-2xl font-bold text-cyan-300">Academic Roadmap</h2>
+                <button id="toggle-past-events" class="portal-btn text-sm py-2 px-4">Show Past Events</button>
+            </div>
+            <div id="roadmap-container" class="scrollbar-hide">
+                 <div class="timeline">
+                    <!-- Roadmap items will be dynamically inserted here -->
+                 </div>
             </div>
         </div>
     </div>
@@ -579,7 +727,7 @@
 
     <!-- Discussion Room Modal -->
     <div id="discussion-modal" class="modal">
-        <div class="modal-content flex flex-col">
+        <div class="modal-content">
             <span class="close-btn" id="close-discussion-modal">&times;</span>
             <h2 class="text-xl md:text-2xl font-bold mb-4 text-cyan-300 text-center">Discussion Room</h2>
             <div id="chat-messages" class="flex-grow p-4 bg-gray-900 rounded-lg border border-gray-700 mb-4 scrollbar-hide">
@@ -589,6 +737,31 @@
                 <input type="text" id="chat-input" placeholder="Type your message..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-cyan-400" autocomplete="off">
                 <button type="submit" id="send-chat-btn" class="portal-btn text-base p-2 px-6 glow-container">Send</button>
             </form>
+        </div>
+    </div>
+
+    <!-- New Floating Action Button (FAB) for Student Services -->
+    <div id="fab-container">
+        <div class="fab-options">
+            <div id="fab-attendance" class="fab-option">
+                <i class="fas fa-check-circle text-xl text-green-400"></i>
+                <span class="tooltip">Attendance</span>
+            </div>
+            <div id="fab-mess" class="fab-option">
+                <i class="fas fa-utensils text-xl text-orange-400"></i>
+                <span class="tooltip">Mess Menu</span>
+            </div>
+            <div id="fab-ai" class="fab-option">
+                <i class="fas fa-robot text-xl text-cyan-400"></i>
+                <span class="tooltip">AI Sahayak</span>
+            </div>
+            <div id="fab-discussion" class="fab-option">
+                <i class="fas fa-comments text-xl text-purple-400"></i>
+                <span class="tooltip">Discussion</span>
+            </div>
+        </div>
+        <div id="fab-trigger">
+            <i class="fas fa-plus text-2xl text-white transition-transform duration-300"></i>
         </div>
     </div>
 
@@ -614,9 +787,156 @@
 
         // Global variables for data from Firebase
         let subjects = [];
-        let events = [];
         
-        // Timetable data (can also be moved to Firebase later if needed)
+        // --- Hardcoded Data ---
+        const academicCalendar = [
+            { title: 'Registration of 1st Semester (B.Tech, Intgt M.Tech, All UG and Diploma)', fullDate: 'July 10 2025', displayDate: 'July 10', category: 'Deadline' },
+            { title: 'Induction Program and Commencement of Academic Activities for UG 1st Year', fullDate: 'July 11 2025', displayDate: 'July 11', category: 'Event' },
+            { title: '(B) Existing PhD Scholars - Registration', fullDate: 'July 21 2025', displayDate: 'July 21', category: 'Deadline' },
+            { title: 'Registration of 1st Semester (All PG Programs and Lateral Entry)', fullDate: 'July 24 2025', displayDate: 'July 24', category: 'Deadline' },
+            { title: 'Registration All students except 1st Semester (Online)', fullDate: 'July 24 2025', displayDate: 'July 24', category: 'Deadline' },
+            { title: 'Commencement of Classes for all batches (except 1st Sem UG Program)', fullDate: 'July 24 2025', displayDate: 'July 24', category: 'Event' },
+            { title: '(A) Ph.D New Admissions July 2025 : Enrollment', fullDate: 'July 29 2025', displayDate: 'July 29', category: 'Deadline' },
+            { title: 'Last date to exercise options for Add & Drop Subjects (except 1st Semester students)', fullDate: 'July 31 2025', displayDate: 'July 31', category: 'Deadline' },
+            { title: '(A) Ph.D New Admissions July 2025 : Orientation', fullDate: 'July 31 2025', displayDate: 'July 31', category: 'Event' },
+            { title: 'Deactivation of Un-Registered Students', fullDate: 'August 1 2025', displayDate: 'August 1', category: 'Deadline' },
+            { title: 'DPMAC Meeting and Completion of follow-up Registration requirements', fullDate: 'August 2 2025', displayDate: 'August 2', category: 'Event' },
+            { title: '(A) Ph.D New Admissions July 2025 : Registration', fullDate: 'August 4 2025', displayDate: 'August 4', category: 'Deadline' },
+            { title: 'Last Date for Registration of MOOC subject on web-portal', fullDate: 'August 7 2025', displayDate: 'August 7', category: 'Deadline' },
+            { title: 'Rakshabandhan', fullDate: 'August 9 2025', displayDate: 'August 9', category: 'Holiday' },
+            { title: 'Independence Day', fullDate: 'August 15 2025', displayDate: 'August 15', category: 'Holiday' },
+            { title: 'Janmashtami', fullDate: 'August 16 2025', displayDate: 'August 16', category: 'Holiday' },
+            { title: 'Ebullience/Welcome function of 1st year students', fullDate: 'August 23 2025', displayDate: 'August 23', category: 'Event' },
+            { title: 'Attendance Review before T1 exam', fullDate: 'August 27 2025', displayDate: 'August 27', category: 'Deadline' },
+            { title: 'T1 Examination & Results', fullDate: 'August 29 2025', displayDate: 'Aug 29 → Sep 6', category: 'Exam' },
+            { title: 'Showing of Evaluated Answer Sheets to students (Latest by)', fullDate: 'September 12 2025', displayDate: 'September 12', category: 'Deadline' },
+            { title: 'Results Uploading on System (Latest by)', fullDate: 'September 15 2025', displayDate: 'September 15', category: 'Deadline' },
+            { title: 'Summer Training Viva - Locking of Marks', fullDate: 'September 16 2025', displayDate: 'September 16', category: 'Viva' },
+            { title: 'Gandhi Jayanti / Dussehra', fullDate: 'October 2 2025', displayDate: 'October 2', category: 'Holiday' },
+            { title: 'Allocation of Topics for Seminar/Term Paper for M.Tech 3rd Sem', fullDate: 'October 8 2025', displayDate: 'October 8', category: 'Deadline' },
+            { title: 'Attendance Review before T2 exam', fullDate: 'October 8 2025', displayDate: 'October 8', category: 'Deadline' },
+            { title: 'Lab/Projects - Mid Term Seminars / Vivas - Results to be uploaded by', fullDate: 'October 10 2025', displayDate: 'October 10', category: 'Deadline' },
+            { title: 'Mid Term/ T2 Examination & Results', fullDate: 'October 10 2025', displayDate: 'Oct 10 → Oct 18', category: 'Exam' },
+            { title: 'Semester Break - Diwali (Odd)', fullDate: 'October 19 2025', displayDate: 'Oct 19 → Oct 26', category: 'Holiday' },
+            { title: 'Student Vacation (Mid-semester break (Diwali))', fullDate: 'October 19 2025', displayDate: 'Oct 19 → Oct 26', category: 'Holiday' },
+            { title: 'Final List of Electives to be sent to Registrar\'s Office', fullDate: 'October 20 2025', displayDate: 'October 20', category: 'Deadline' },
+            { title: 'Deepawali', fullDate: 'October 20 2025', displayDate: 'Oct 20 → Oct 21', category: 'Holiday' },
+            { title: 'Faculty Vacation (Diwali)', fullDate: 'October 20 2025', displayDate: 'Oct 20 → Oct 25', category: 'Holiday' },
+            { title: 'Sharing draft curriculum with Dean (A&R)-2', fullDate: 'October 22 2025', displayDate: 'October 22', category: 'Deadline' },
+            { title: 'Govardhan Puja', fullDate: 'October 22 2025', displayDate: 'October 22', category: 'Holiday' },
+            { title: 'Finalized curriculum to be entered in ERP system', fullDate: 'October 23 2025', displayDate: 'Oct 23 → Oct 28', category: 'Deadline' },
+            { title: 'Showing of Evaluated Answer Sheets to students (Latest by)', fullDate: 'October 31 2025', displayDate: 'October 31', category: 'Deadline' },
+            { title: 'Results Uploading on System (Latest by)', fullDate: 'November 3 2025', displayDate: 'November 3', category: 'Deadline' },
+            { title: 'Orientation program for electives', fullDate: 'November 5 2025', displayDate: 'Nov 5 → Nov 7', category: 'Event' },
+            { title: 'Guru Nanak Jayanti', fullDate: 'November 5 2025', displayDate: 'November 5', category: 'Holiday' },
+            { title: 'Pre-Registration by students through webportal', fullDate: 'November 8 2025', displayDate: 'Nov 8 → Nov 11', category: 'Deadline' },
+            { title: 'Make-up Examination (All)', fullDate: 'November 11 2025', displayDate: 'Nov 11 → Nov 15', category: 'Exam' },
+            { title: 'Major/Minor Project allocation', fullDate: 'November 18 2025', displayDate: 'November 18', category: 'Deadline' },
+            { title: 'Final Project Viva / End-Term Seminar', fullDate: 'November 20 2025', displayDate: 'November 20', category: 'Viva' },
+            { title: 'Students\' Online Feed Back Collection by', fullDate: 'November 21 2025', displayDate: 'November 21', category: 'Deadline' },
+            { title: 'Submission of Project/Dissertation reports', fullDate: 'November 25 2025', displayDate: 'November 25', category: 'Deadline' },
+            { title: 'End Semester Attendance Review', fullDate: 'November 25 2025', displayDate: 'November 25', category: 'Deadline' },
+            { title: 'Classes to be over', fullDate: 'November 28 2025', displayDate: 'November 28', category: 'Deadline' },
+            { title: 'Meeting of Time Table Committee', fullDate: 'November 28 2025', displayDate: 'November 28', category: 'Event' },
+            { title: 'Debar list to be displayed', fullDate: 'November 29 2025', displayDate: 'November 29', category: 'Deadline' },
+            { title: 'Lab/Minor Projects - End Term Vivas - Results uploaded by', fullDate: 'December 1 2025', displayDate: 'December 1', category: 'Deadline' },
+            { title: 'End Semester Examination', fullDate: 'December 1 2025', displayDate: 'Dec 1 → Dec 13', category: 'Exam' },
+            { title: 'Minor projects results shared with students', fullDate: 'December 14 2025', displayDate: 'December 14', category: 'Event' },
+            { title: 'Semester Break', fullDate: 'December 14 2025', displayDate: 'Dec 14 → Jan 1', category: 'Holiday' },
+            { title: 'Student Vacation', fullDate: 'December 14 2025', displayDate: 'Dec 14 → Jan 1', category: 'Holiday' },
+            { title: 'Showing of Evaluated Answer Sheets to students by', fullDate: 'December 17 2025', displayDate: 'December 17', category: 'Deadline' },
+            { title: 'Meeting of IAMC for results', fullDate: 'December 19 2025', displayDate: 'December 19', category: 'Event' },
+            { title: 'Provisional Grades Display', fullDate: 'December 19 2025', displayDate: 'December 19', category: 'Event' },
+            { title: 'JIIT Alumni Meet', fullDate: 'December 20 2025', displayDate: 'December 20', category: 'Event' },
+            { title: 'Freezing the grades/Submission of Final Grades', fullDate: 'December 20 2025', displayDate: 'December 20', category: 'Deadline' },
+            { title: 'Publish of Results by Registrar', fullDate: 'December 22 2025', displayDate: 'December 22', category: 'Event' },
+            { title: 'Supplementary Examination - Registration', fullDate: 'December 22 2025', displayDate: 'Dec 22 → Dec 24', category: 'Deadline' },
+            { title: 'Christmas', fullDate: 'December 25 2025', displayDate: 'December 25', category: 'Holiday' },
+            { title: 'Faculty Vacation (Winter)', fullDate: 'December 25 2025', displayDate: 'Dec 25 → Jan 1', category: 'Holiday' },
+            { title: 'Supplementary Exam Schedule', fullDate: 'December 29 2025', displayDate: 'Dec 29 → Dec 31', category: 'Exam' },
+            { title: 'IAMC meeting for finalization Suppl. Results', fullDate: 'January 2 2026', displayDate: 'January 2', category: 'Event' },
+            { title: 'Commencement of Next Semester', fullDate: 'January 2 2026', displayDate: 'January 2', category: 'Event' },
+            { title: 'Registration of 1st Semester (All PG Programs and Lateral Entry)', fullDate: 'January 2 2026', displayDate: 'January 2', category: 'Deadline' },
+            { title: 'Registration All students except 1st Semester (Online)', fullDate: 'January 2 2026', displayDate: 'January 2', category: 'Deadline' },
+            { title: 'Commencement of Classes for all batches (except 1st Sem UG Program)', fullDate: 'January 2 2026', displayDate: 'January 2', category: 'Event' },
+            { title: 'Submission of Suppl. Exam Grades by Faculty and Freezing', fullDate: 'January 3 2026', displayDate: 'January 3', category: 'Deadline' },
+            { title: '(B) Existing PhD Scholars - Registration', fullDate: 'January 4 2026', displayDate: 'January 4', category: 'Deadline' },
+            { title: 'Decl. of Results of Suppl. Exam', fullDate: 'January 5 2026', displayDate: 'January 5', category: 'Event' },
+            { title: 'Registration of 1st Semester (B.Tech, Intgt M.Tech, All UG and Diploma)', fullDate: 'January 5 2026', displayDate: 'January 5', category: 'Deadline' },
+            { title: 'Last date to exercise options for Add & Drop Subjects (except 1st Semester students)', fullDate: 'January 9 2026', displayDate: 'January 9', category: 'Deadline' },
+            { title: 'Deactivation of Un-Registered Students', fullDate: 'January 10 2026', displayDate: 'January 10', category: 'Deadline' },
+            { title: 'Last Date for Registration of MOOC subject on web-portal', fullDate: 'January 16 2026', displayDate: 'January 16', category: 'Deadline' },
+            { title: 'Republic day', fullDate: 'January 26 2026', displayDate: 'January 26', category: 'Holiday' },
+            { title: 'JYC Function', fullDate: 'February 6 2026', displayDate: 'Feb 6 → Feb 8', category: 'Event' },
+            { title: 'Attendance Review before T1 exam', fullDate: 'February 8 2026', displayDate: 'February 8', category: 'Deadline' },
+            { title: 'T1 Examination & Results - Examination Schedule', fullDate: 'February 10 2026', displayDate: 'Feb 10 → Feb 18', category: 'Exam' },
+            { title: 'Maha Shivratri', fullDate: 'February 15 2026', displayDate: 'February 15', category: 'Holiday' },
+            { title: 'Showing of Evaluated Answer Sheets to students (Latest by)', fullDate: 'February 24 2026', displayDate: 'February 24', category: 'Deadline' },
+            { title: 'Results Uploading on System (Latest by)', fullDate: 'February 28 2026', displayDate: 'February 28', category: 'Deadline' },
+            { title: 'Semester Break - Holi (Even)', fullDate: 'March 1 2026', displayDate: 'Mar 1 → Mar 8', category: 'Holiday' },
+            { title: 'Student Vacation (Mid-semester break (Holi))', fullDate: 'March 1 2026', displayDate: 'Mar 1 → Mar 8', category: 'Holiday' },
+            { title: 'Faculty Vacation (Holi)', fullDate: 'March 2 2026', displayDate: 'Mar 2 → Mar 7', category: 'Holiday' },
+            { title: 'Holi', fullDate: 'March 3 2026', displayDate: 'Mar 3 → Mar 4', category: 'Holiday' },
+            { title: 'Eid-Ul-Fitr*', fullDate: 'March 21 2026', displayDate: 'March 21', category: 'Holiday' },
+            { title: 'Attendance Review before T2 exam', fullDate: 'March 22 2026', displayDate: 'March 22', category: 'Deadline' },
+            { title: 'Lab/Projects - Mid Term Seminars / Vivas - Results to be uploaded by', fullDate: 'March 24 2026', displayDate: 'March 24', category: 'Deadline' },
+            { title: 'Mid Term/ T2 Examination & Results - Examination Schedule', fullDate: 'March 24 2026', displayDate: 'Mar 24 → Apr 2', category: 'Exam' },
+            { title: 'Ram Navami', fullDate: 'March 26 2026', displayDate: 'March 26', category: 'Holiday' },
+            { title: 'Mahavir Jayanti', fullDate: 'March 31 2026', displayDate: 'March 31', category: 'Holiday' },
+            { title: 'Final List of Electives to be sent to Registrar\'s Office', fullDate: 'April 4 2026', displayDate: 'April 4', category: 'Deadline' },
+            { title: 'Sharing draft curriculum with Dean (A&R)-2', fullDate: 'April 6 2026', displayDate: 'April 6', category: 'Deadline' },
+            { title: 'Finalized curriculum (including electives) to be entered in ERP system', fullDate: 'April 7 2026', displayDate: 'Apr 7 → Apr 11', category: 'Deadline' },
+            { title: 'Showing of Evaluated Answer Sheets to students (Latest by)', fullDate: 'April 8 2026', displayDate: 'April 8', category: 'Deadline' },
+            { title: 'Results Uploading on System (Latest by)', fullDate: 'April 11 2026', displayDate: 'April 11', category: 'Deadline' },
+            { title: 'Ambedkar Jayanti', fullDate: 'April 14 2026', displayDate: 'April 14', category: 'Holiday' },
+            { title: 'Orientation program by the department/s to help students to select electives', fullDate: 'April 15 2026', displayDate: 'Apr 15 → Apr 17', category: 'Event' },
+            { title: 'Pre-Registration by students through webportal', fullDate: 'April 18 2026', displayDate: 'Apr 18 → Apr 21', category: 'Deadline' },
+            { title: 'Summer Semester - 2026 - List of subjects to be offered in Summer Semester to be forwarded to Registrar\'s Office', fullDate: 'April 20 2026', displayDate: 'April 20', category: 'Deadline' },
+            { title: 'Make-up Examination (All)', fullDate: 'April 21 2026', displayDate: 'Apr 21 → Apr 25', category: 'Exam' },
+            { title: 'Major Project allocation for next year by', fullDate: 'April 22 2026', displayDate: 'April 22', category: 'Deadline' },
+            { title: 'Minor Project allocation for next semester by', fullDate: 'April 22 2026', displayDate: 'April 22', category: 'Deadline' },
+            { title: 'Summer Semester notice to Website', fullDate: 'April 24 2026', displayDate: 'April 24', category: 'Event' },
+            { title: 'Fee payment and Subject Registration by Students', fullDate: 'April 27 2026', displayDate: 'Apr 27 → May 2', category: 'Deadline' },
+            { title: 'Students\' Online Feed Back Collection by', fullDate: 'May 1 2026', displayDate: 'May 1', category: 'Deadline' },
+            { title: 'Budh Purnima', fullDate: 'May 1 2026', displayDate: 'May 1', category: 'Holiday' },
+            { title: 'List of Registered students to be forwarded to Dean (A&R-2)', fullDate: 'May 5 2026', displayDate: 'May 5', category: 'Deadline' },
+            { title: 'End Semester Attendance Review', fullDate: 'May 6 2026', displayDate: 'May 6', category: 'Deadline' },
+            { title: 'Submission of Project (B.Tech & M.Tech)/ Dissertation reports (M.Tech)/ Term Paper (M.Tech)', fullDate: 'May 7 2026', displayDate: 'May 7', category: 'Deadline' },
+            { title: 'Classes to be over', fullDate: 'May 8 2026', displayDate: 'May 8', category: 'Deadline' },
+            { title: 'Debar list to be displayed', fullDate: 'May 8 2026', displayDate: 'May 8', category: 'Deadline' },
+            { title: 'Display of Final list of subjects to students', fullDate: 'May 8 2026', displayDate: 'May 8', category: 'Event' },
+            { title: 'Meeting of Time Table Committee for courses of next semester', fullDate: 'May 9 2026', displayDate: 'May 9', category: 'Event' },
+            { title: 'Lab/Minor Projects - End Term Seminars / Vivas - Results uploaded by', fullDate: 'May 11 2026', displayDate: 'May 11', category: 'Deadline' },
+            { title: 'End Semester Examination', fullDate: 'May 11 2026', displayDate: 'May 11 → May 23', category: 'Exam' },
+            { title: 'Time Table for Summer Semester', fullDate: 'May 18 2026', displayDate: 'May 18', category: 'Event' },
+            { title: 'Meeting of Disciplinary Committee (Disciplinary Grade Finalization)', fullDate: 'May 25 2026', displayDate: 'May 25', category: 'Event' },
+            { title: 'Showing of Evaluated Answer Sheets to students by', fullDate: 'May 27 2026', displayDate: 'May 27', category: 'Deadline' },
+            { title: 'Vacations & Summer Internship - Semester Break', fullDate: 'May 27 2026', displayDate: 'May 27 → Jul 24', category: 'Holiday' },
+            { title: 'Student Vacation (Summer Vacation)', fullDate: 'May 27 2026', displayDate: 'May 27 → Jul 22', category: 'Holiday' },
+            { title: 'Summer Internship (Industrial Trg) Period', fullDate: 'May 28 2026', displayDate: 'May 28 → Jul 8', category: 'Event' },
+            { title: 'Meeting of IAMC for results of all courses', fullDate: 'May 29 2026', displayDate: 'May 29', category: 'Event' },
+            { title: 'Provisional Grades Display', fullDate: 'May 29 2026', displayDate: 'May 29', category: 'Event' },
+            { title: 'The results of minor projects after finalization through institutional committee to be shared with students and those failing to qualify should be given additional time', fullDate: 'May 30 2026', displayDate: 'May 30', category: 'Event' },
+            { title: 'Freezing the grades/Submission of Final Grades to Registrar', fullDate: 'May 30 2026', displayDate: 'May 30', category: 'Deadline' },
+            { title: 'Publish of Results by Registrar', fullDate: 'June 1 2026', displayDate: 'June 1', category: 'Event' },
+            { title: 'Supplementary Examination - Registration for Supl Exam', fullDate: 'June 1 2026', displayDate: 'Jun 1 → Jun 3', category: 'Deadline' },
+            { title: 'Faculty Vacation (Summer)', fullDate: 'June 2 2026', displayDate: 'Jun 2 → Jul 9', category: 'Holiday' },
+            { title: 'Supplementary Exam Schedule', fullDate: 'June 5 2026', displayDate: 'Jun 5 → Jun 8', category: 'Exam' },
+            { title: 'Commencement of Classes', fullDate: 'June 5 2026', displayDate: 'June 5', category: 'Event' },
+            { title: 'Re-opening of Registration for Summer Semester (for registering in backlog subjects on offer of current semester)', fullDate: 'June 6 2026', displayDate: 'Jun 6 → Jun 8', category: 'Deadline' },
+            { title: 'IAMC meeting for finalization Suppl. Results', fullDate: 'June 11 2026', displayDate: 'June 11', category: 'Event' },
+            { title: 'Submission of Suppl. Exam Grades by Faculty and Freezing', fullDate: 'June 13 2026', displayDate: 'June 13', category: 'Deadline' },
+            { title: 'Decl. of Results of Suppl. Exam', fullDate: 'June 13 2026', displayDate: 'June 13', category: 'Event' },
+            { title: 'Summer Semester Mid Term Test', fullDate: 'June 24 2026', displayDate: 'Jun 24 → Jun 26', category: 'Exam' },
+            { title: 'Summer Semester End Term Test', fullDate: 'July 15 2026', displayDate: 'Jul 15 → Jul 17', category: 'Exam' },
+            { title: 'Showing of answer scripts to the students', fullDate: 'July 20 2026', displayDate: 'July 20', category: 'Deadline' },
+            { title: 'IAMC Meeting finalization of Result', fullDate: 'July 21 2026', displayDate: 'July 21', category: 'Event' },
+            { title: 'Submission of Exam Grades by Faculty and Freezing', fullDate: 'July 22 2026', displayDate: 'July 22', category: 'Deadline' },
+            { title: 'Declaration of result', fullDate: 'July 23 2026', displayDate: 'July 23', category: 'Event' },
+            { title: 'Commencement of Next Semester', fullDate: 'July 23 2026', displayDate: 'July 23', category: 'Event' },
+            { title: 'Finalization of progression of 1st yr students into 2nd yr. and their registration in relevant Sem.', fullDate: 'July 27 2026', displayDate: 'July 27', category: 'Deadline' },
+        ]; 
+
         const timetableData = [
              {
                 day: 'Monday',
@@ -678,22 +998,20 @@
         const portalContent = document.getElementById('portal-content');
         const subjectsContainer = document.getElementById('subjects-container');
         const eventsContainer = document.getElementById('events-container');
-        const allEventsContainer = document.getElementById('all-events-container');
         const clockElement = document.getElementById('clock');
         const showTimetableBtn = document.getElementById('show-timetable-btn');
         const timetableModal = document.getElementById('timetable-modal');
-        const eventsModal = document.getElementById('events-modal');
+        const roadmapModal = document.getElementById('roadmap-modal');
         const materialModal = document.getElementById('material-modal');
         const loginModal = document.getElementById('login-modal');
         const closeTimetableBtn = document.getElementById('close-modal-btn');
-        const closeEventsBtn = document.getElementById('close-events-modal-btn');
+        const closeRoadmapBtn = document.getElementById('close-roadmap-modal');
+        const togglePastEventsBtn = document.getElementById('toggle-past-events');
         const closeMaterialBtn = document.getElementById('close-material-modal-btn');
         const timetableContent = document.getElementById('timetable-content');
         const materialButtonsContainer = document.getElementById('material-buttons-container');
         const materialModalTitle = document.getElementById('material-modal-title');
         const welcomeMessage = document.getElementById('welcome-message');
-        const attendanceBtn = document.getElementById('attendance-btn');
-        const messBtn = document.getElementById('mess-btn');
         const portalModal = document.getElementById('portal-modal');
         const portalIframe = document.getElementById('portal-iframe');
         const closePortalBtn = document.getElementById('close-portal-btn');
@@ -710,7 +1028,6 @@
         const popUp = document.getElementById('announcement-pop-up');
         const closeButton = document.getElementById('close-button');
 
-        const aiHelpBtn = document.getElementById('ai-help-btn');
         const aiHelpModal = document.getElementById('ai-help-modal');
         const closeAiModalBtn = document.getElementById('close-ai-modal');
         const aiInput = document.getElementById('ai-input');
@@ -721,21 +1038,22 @@
 
         const logoutBtn = document.getElementById('logout-btn');
 
-        const discussionBtn = document.getElementById('discussion-btn');
         const discussionModal = document.getElementById('discussion-modal');
         const closeDiscussionModalBtn = document.getElementById('close-discussion-modal');
         const chatMessagesContainer = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const chatInput = document.getElementById('chat-input');
+        const fabContainer = document.getElementById('fab-container');
+        const fabTrigger = document.getElementById('fab-trigger');
+        const fabTriggerIcon = fabTrigger.querySelector('i');
 
         // State variables
-        let currentEventIndex = 0;
-        let eventInterval;
         let currentSubject = '';
         let currentMaterialType = '';
         let timetableInterval;
         let currentActivityInterval;
-        let unsubscribeChat; // To stop listening to chat messages when modal is closed
+        let unsubscribeChat; 
+        let showPastEvents = false;
         
         // --- Data Fetching from Firebase ---
         async function fetchSubjects() {
@@ -748,24 +1066,7 @@
                 subjectsContainer.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not load subjects. Ensure Firestore is set up correctly.</p>`;
             }
         }
-
-        async function fetchEvents() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "events"));
-                events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (events.length > 0) {
-                    if(eventInterval) clearInterval(eventInterval);
-                    renderSingleEvent();
-                    eventInterval = setInterval(renderSingleEvent, 2000);
-                } else {
-                     renderSingleEvent();
-                }
-            } catch(e) {
-                console.error("Error fetching events: ", e);
-                eventsContainer.innerHTML = `<div class="bg-gray-800 p-4 rounded-lg text-center text-red-400">Could not load events.</div>`;
-            }
-        }
-
+        
         async function fetchAnnouncements() {
             try {
                 const querySnapshot = await getDocs(collection(db, "announcements"));
@@ -847,31 +1148,74 @@
             }
         };
 
-        const renderSingleEvent = () => {
-            if (events.length === 0) {
-                eventsContainer.innerHTML = `<div class="bg-gray-800 p-4 rounded-lg text-center text-gray-400">No upcoming events.</div>`;
-                return;
-            }
-            eventsContainer.innerHTML = '';
-            const event = events[currentEventIndex];
-            const eventCard = document.createElement('div');
-            eventCard.className = 'bg-gray-800 p-4 rounded-lg flex items-center single-event-card border border-gray-700 hover:bg-gray-700 transition-colors duration-200 animated-event';
-            eventCard.innerHTML = `<div class="flex-grow"><h3 class="font-semibold text-gray-200">${event.title}</h3><p class="text-sm text-gray-400">${event.date} ${event.time || ''}</p></div>`;
-            eventsContainer.appendChild(eventCard);
-            currentEventIndex = (currentEventIndex + 1) % events.length;
-        };
+        const renderUpcomingEventHighlight = () => {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0); // Normalize to start of day for date comparison
 
-        const renderAllEvents = () => {
-            allEventsContainer.innerHTML = '';
-             if (events.length === 0) {
-                allEventsContainer.innerHTML = `<div class="bg-gray-800 p-4 rounded-lg text-center text-gray-400">No upcoming events.</div>`;
-                return;
+            let nextEvent = null;
+
+            for (const event of academicCalendar) {
+                const eventDate = new Date(event.fullDate);
+                if (eventDate >= now) {
+                    nextEvent = event;
+                    break;
+                }
             }
-            events.forEach(event => {
+            
+            eventsContainer.innerHTML = '';
+            if (nextEvent) {
                 const eventCard = document.createElement('div');
-                eventCard.className = 'bg-gray-800 p-4 rounded-lg flex items-center event-card border border-gray-700 hover:bg-gray-700 transition-colors duration-200';
-                eventCard.innerHTML = `<div class="flex-grow"><h3 class="font-semibold text-gray-200">${event.title}</h3><p class="text-sm text-gray-400">${event.date} ${event.time || ''}</p></div>`;
-                allEventsContainer.appendChild(eventCard);
+                eventCard.className = 'bg-gray-800 p-4 rounded-lg flex items-center single-event-card border border-gray-700 hover:bg-gray-700 transition-colors duration-200 upcoming-event-glow';
+                eventCard.innerHTML = `<div class="flex-grow"><h3 class="font-semibold text-gray-200">${nextEvent.title}</h3><p class="text-sm text-gray-400">${nextEvent.displayDate}</p></div>`;
+                eventsContainer.appendChild(eventCard);
+            } else {
+                 eventsContainer.innerHTML = `<div class="bg-gray-800 p-4 rounded-lg text-center text-gray-400">No more events this semester.</div>`;
+            }
+        };
+        
+        const renderRoadmap = () => {
+            const timelineContainer = document.querySelector('#roadmap-modal .timeline');
+            timelineContainer.innerHTML = '';
+            const now = new Date();
+            now.setHours(0,0,0,0);
+
+            const eventsToRender = showPastEvents ? academicCalendar : academicCalendar.filter(event => new Date(event.fullDate) >= now);
+
+            const getIconForCategory = (category) => {
+                switch (category) {
+                    case 'Exam': return 'fas fa-pen-alt text-red-400';
+                    case 'Holiday': return 'fas fa-glass-cheers text-green-400';
+                    case 'Deadline': return 'fas fa-hourglass-half text-yellow-400';
+                    case 'Viva': return 'fas fa-microphone-alt text-purple-400';
+                    default: return 'fas fa-calendar-check text-blue-400';
+                }
+            };
+
+            eventsToRender.forEach((event, index) => {
+                const eventDate = new Date(event.fullDate);
+                const isPast = eventDate < now;
+                const isToday = eventDate.toDateString() === now.toDateString();
+
+                let statusClass = 'upcoming-event';
+                if (isPast) statusClass = 'past-event';
+                if (isToday) statusClass = 'today-event';
+                
+                const side = index % 2 === 0 ? 'left' : 'right';
+
+                const item = document.createElement('div');
+                item.className = `timeline-item ${side} ${statusClass}`;
+                item.innerHTML = `
+                    <div class="timeline-content">
+                        <div class="flex items-center gap-4">
+                            <i class="${getIconForCategory(event.category)} text-2xl"></i>
+                            <div>
+                                <h3 class="font-bold text-lg text-white">${event.title}</h3>
+                                <p class="text-cyan-300 font-semibold">${event.displayDate}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.appendChild(item);
             });
         };
         
@@ -990,14 +1334,31 @@
             timetableModal.classList.add('active');
             startTimetableUpdates();
         });
-        
-        attendanceBtn.addEventListener('click', () => openPortalModal('https://jportal2-0.vercel.app/#/attendance'));
-        messBtn.addEventListener('click', () => openPortalModal('https://mess-schedule.vercel.app/'));
 
-        aiHelpBtn.addEventListener('click', () => {
+        // Add new FAB listeners
+        fabTrigger.addEventListener('click', () => {
+            fabContainer.classList.toggle('open');
+            fabTriggerIcon.classList.toggle('fa-plus');
+            fabTriggerIcon.classList.toggle('fa-times');
+        });
+
+        document.getElementById('fab-attendance').addEventListener('click', () => openPortalModal('https://jportal2-0.vercel.app/#/attendance'));
+        document.getElementById('fab-mess').addEventListener('click', () => openPortalModal('https://mess-schedule.vercel.app/'));
+        document.getElementById('fab-ai').addEventListener('click', () => {
             aiHelpModal.classList.add('active');
             aiResponseContainer.textContent = 'Jawaab yahan dikhayega...';
             aiInput.value = '';
+        });
+        document.getElementById('fab-discussion').addEventListener('click', () => {
+             discussionModal.classList.add('active');
+            const q = query(collection(db, "chatMessages"), orderBy("timestamp", "desc"), limit(20));
+            unsubscribeChat = onSnapshot(q, (querySnapshot) => {
+                const messages = [];
+                querySnapshot.forEach((doc) => {
+                    messages.push(doc.data());
+                });
+                renderChat(messages.reverse());
+            });
         });
 
         const openPortalModal = (url) => {
@@ -1008,8 +1369,16 @@
         };
 
         eventsContainer.addEventListener('click', () => {
-            renderAllEvents();
-            eventsModal.classList.add('active');
+            showPastEvents = false; // Reset view to upcoming only
+            togglePastEventsBtn.textContent = 'Show Past Events';
+            renderRoadmap();
+            roadmapModal.classList.add('active');
+        });
+        
+        togglePastEventsBtn.addEventListener('click', () => {
+            showPastEvents = !showPastEvents;
+            togglePastEventsBtn.textContent = showPastEvents ? 'Hide Past Events' : 'Show Past Events';
+            renderRoadmap();
         });
         
         document.addEventListener('click', (event) => {
@@ -1096,16 +1465,16 @@
             updateWelcomeMessage(localStorage.getItem('userName'));
             updateClock();
             renderCurrentActivity();
+            renderUpcomingEventHighlight();
             currentActivityInterval = setInterval(renderCurrentActivity, 30000);
             
             // Fetch dynamic content
             fetchSubjects();
-            fetchEvents();
             fetchAnnouncements();
         };
 
         // --- Modal Close Listeners ---
-        [closeTimetableBtn, closeEventsBtn, closeMaterialBtn, closeAiModalBtn, closeDiscussionModalBtn, closePortalBtn].forEach(btn => {
+        [closeTimetableBtn, closeRoadmapBtn, closeMaterialBtn, closeAiModalBtn, closeDiscussionModalBtn, closePortalBtn].forEach(btn => {
             btn.addEventListener('click', () => {
                 btn.closest('.modal').classList.remove('active');
                  if (btn === closeTimetableBtn) clearInterval(timetableInterval);
@@ -1196,18 +1565,6 @@
                     timestamp: new Date()
                 });
             }
-        });
-        
-        discussionBtn.addEventListener('click', () => {
-            discussionModal.classList.add('active');
-            const q = query(collection(db, "chatMessages"), orderBy("timestamp", "desc"), limit(10));
-            unsubscribeChat = onSnapshot(q, (querySnapshot) => {
-                const messages = [];
-                querySnapshot.forEach((doc) => {
-                    messages.push(doc.data());
-                });
-                renderChat(messages.reverse());
-            });
         });
         
         bellButton.addEventListener('click', () => {
