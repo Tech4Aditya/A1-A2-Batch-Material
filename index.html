@@ -1125,12 +1125,14 @@
         // --- Data Fetching from Firebase ---
         async function fetchSubjects() {
             try {
-                const querySnapshot = await getDocs(collection(db, "subjects"));
+                const subjectsRef = collection(db, "subjects");
+                const q = query(subjectsRef, orderBy("order"));
+                const querySnapshot = await getDocs(q);
                 subjects = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderSubjects();
             } catch (e) {
                 console.error("Error fetching subjects: ", e);
-                subjectsContainer.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not load subjects. Ensure Firestore is set up correctly.</p>`;
+                subjectsContainer.innerHTML = `<p class="text-center text-red-400 col-span-full">Could not load subjects. Ensure you have added an 'order' field (type: number) to each subject document in Firestore.</p>`;
             }
         }
         
@@ -1497,15 +1499,15 @@
             currentMaterialType = materialType;
             materialButtonsContainer.innerHTML = '';
             
-            const materials = subjectData[materialType];
+            const materials = subjectData[materialType]; // This is now an array
             materialModalTitle.textContent = `Select Material for ${subjectData.name} (${materialType})`;
 
-            if (materials && Object.keys(materials).length > 0) {
-                 Object.entries(materials).forEach(([key, value]) => {
+            if (materials && Array.isArray(materials) && materials.length > 0) {
+                 materials.forEach((material) => { // Iterate over the array
                     const materialBtn = document.createElement('button');
                     materialBtn.className = 'chapter-btn';
-                    materialBtn.textContent = key;
-                    materialBtn.dataset.link = value;
+                    materialBtn.textContent = material.name; // Use the 'name' field
+                    materialBtn.dataset.link = material.link; // Use the 'link' field
                     materialButtonsContainer.appendChild(materialBtn);
                 });
             } else {
@@ -1587,7 +1589,8 @@
 
             const systemPrompt = "Aap ek sahayak student assistant hain, jo college ke vidyarthiyon ko unki padhai aur anya kaamon mein madad karne ke liye banaya gaya hai. Aapko unke prashnon ka jawaab Hindi (Latin) mein dena hai. Apne jawaab ko sahi dhang se format karein (HTML tags ka upyog na karein).";
             
-            const apiKey = ""; // You can add your Gemini API key here if you have one.
+            // PASTE YOUR API KEY HERE. This is required for the AI to work.
+            const apiKey = ""; 
             
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
@@ -1615,12 +1618,13 @@
                 if (text) {
                     aiResponseContainer.textContent = text;
                 } else {
-                    aiResponseContainer.textContent = 'Jawaab prapt karne mein koi dikkat hui. Kripya phir se koshish karein.';
+                    aiResponseContainer.textContent = 'Jawaab prapt karne mein koi dikkat hui. Kripya phir se koshish karein. Check browser console for details.';
+                     console.error("AI Response Error:", result);
                 }
 
             } catch (error) {
                 console.error("API Error:", error);
-                aiResponseContainer.textContent = 'Maaf kijiye, ek error aayi. Kripya thodi der baad phir se koshish karein.';
+                aiResponseContainer.textContent = `Maaf kijiye, ek error aayi. ${error.message}. Make sure the API key is correct and you have enabled the Vertex AI API in Google Cloud.`;
             } finally {
                 aiLoader.style.display = 'none';
             }
@@ -1639,7 +1643,8 @@
 
             renderLocalMessage("...", false, botName); // "Bot is typing..."
 
-            const apiKey = ""; // Use the same API key as AI Sahayak
+            // PASTE YOUR API KEY HERE. This is required for the AI Bots to work.
+            const apiKey = "AIzaSyBZwtYb6cif230DFeWYod5Kd_UDQ5cqz8I"; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
             const payload = {
                 contents: [{ parts: [{ text: message }] }],
@@ -1662,7 +1667,7 @@
             } catch (error) {
                 console.error("Bot API Error:", error);
                  chatMessagesContainer.removeChild(chatMessagesContainer.lastChild);
-                renderLocalMessage("Sorry, I'm having trouble thinking right now.", false, botName);
+                renderLocalMessage(`Sorry, I'm having trouble thinking right now. Error: ${error.message}`, false, botName);
             }
         };
 
